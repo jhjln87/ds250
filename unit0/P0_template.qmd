@@ -44,9 +44,7 @@ penguins = load_penguins()
 
 ## QUESTION|TASK 1
 
-__Recreate the first table displayed at [PY4DS: CH2 Data Visualization](https://aeturrell.github.io/python4DS/data-visualise.html)__
-
-
+Below is listed metrics such as species, island, length, mass, sex, and year. These metrics are of penguins researched at Palmer Archipelago in Antarctica between the years 2007 and 2009. The study was originally to track foraging and sexual behaviors as well as adaptability. However, this dataset became widely used among the programming and data science community in late 2020. This table includes the first and last five of the total and unorganized dataset. This dataset is sorted by species, starting with the Adelie species, next the Gentoo species, and finishing with the Chinstrap species.
 ```{python}
 # To recreate the table, all you should need to do is run this code, no editing required
 penguins
@@ -56,9 +54,7 @@ penguins
 
 ## QUESTION|TASK 2
 
-__Recreate an example chart from [PY4DS: CH2 Data Visualization](https://aeturrell.github.io/python4DS/data-visualise.html), in the First Steps section. Specifically, recreate the chart in the subsection labelled "Ultimate Goal", by copying the code above the chart and pasting it in the cell below__
-
-
+Below is an interactive graph of penguin flipper length vs body mass. The trend is generally proportional, meaning that as the flipper length increases the body mass also increses, as shown by the pink line. Each different species is indicated by different shape and color to easily differentiate between. All data between the same species is roughly similar and within a range; the Chinstrap being slightly larger than the Adelie and the Gentoo being significantly larger than the other two species.
 ```{python}
 # Include and execute your code here
 (
