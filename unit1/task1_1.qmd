@@ -50,7 +50,7 @@ adf = (
   .filter(pl.col("name")=="Felisha")
   .sort(by=["year"])
 )
-#adf
+adf
 ```
 
 
@@ -69,7 +69,7 @@ bdf = (
   .filter(pl.col("name")=="David")
   .sort(by=["Total"], descending=True)
 )
-#bdf
+bdf
 ```
 
 
@@ -83,7 +83,7 @@ cdf = (
   .filter(pl.col("name")=="John")
   .sort(by=["Total"],descending=True)
 )
-#cdf
+cdf
 ```
 
 
@@ -97,7 +97,7 @@ ddf = (
   .filter(pl.col("year")==2024)
   .sort("UT",descending=True)
 )
-#ddf.head(10)
+ddf.head(10)
 ```
 
 
