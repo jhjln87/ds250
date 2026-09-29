@@ -1,7 +1,7 @@
 ---
 title: "Client Report - Famous Names"
 subtitle: "Unit 1 Task 3"
-author: "[STUDENT NAME]"
+author: "John Wendt"
 format:
   html:
     self-contained: true
@@ -27,6 +27,7 @@ execute:
 
 ```{python}
 import polars as pl
+import polars.selectors as cs
 import numpy as np
 from lets_plot import *
 
@@ -42,58 +43,77 @@ df = pl.read_csv("https://posit.byui.edu/content/0d43d66f-d3b7-4c43-8c36-52e3ed6
 
 
 
-## QUESTION 1
+## Q1: Author's name in author's states
 
-<!-- Make sure at least one of your charts includes reference marks!! -->
+__Make a new column that represents the total number of babies with the author's name for only those states in which the author has lived. Make a graph displaying that total for your name over time.__
 
-__Make a new column that represents the total number of babies with your name for only those states in which you have lived. (If you have only ever lived in one state, pick at least one other state so you get practice summing across columns). Make a graph displaying that total for your name over time.__
-
-_type your results and analysis here_
-
-_AI use reflection_
-**Link** to the original chat:
-**The Process** How exactly did you use the tool?
-**The Impact**  How did using AI impact your learning?
+_The author's name is John, and he has lived in many states in the US. This incldues being born in North Carolina, moving to New Mexico, serving an LDS mission in Nebraska and South Dakota, and then attending college in Idaho. These five states may be diverse enough to represent the United States as a whole, but many exclude large cities such as New York or Los Angeles. Despite not accurately representing the whole. this graph of specific states still includes large influxes in the 20s and 50s._
 
 ```{python}
-# Q1
-
-
+adf = (
+  df.select("name","year","NC","NM","SD","NE","ID")
+  .filter(pl.col("name")=="John")
+  .with_columns(total=pl.col("NC")+pl.col("NM")+pl.col("SD")+pl.col("NE")+pl.col("ID"))
+)
+aplot = (
+  ggplot(adf,aes(x="year",y="total"))
+  +geom_line(color="black")
+  +scale_x_continuous(format="d")
+  +labs(
+    title="The baby name John in select states",
+    x="Year",
+    y="Total"
+    )
+)
+aplot
 ```
 
 
-## QUESTION 2
+## Q2: Brigham, Mormon belt vs Total
 
-1. __Let's look at a name that is special for members of the church: Brigham. For each year, calculate what proportion of babies named Brigham were born in Idaho and Utah? Make a graph displaying the proportion over time.__  
+__Let's look at a name that is special for members of the church: Brigham. For each year, calculate what proportion of babies named Brigham were born in Idaho and Utah? Make a graph displaying the proportion over time.__  
 
-_type your results and analysis here_
+_The name Brigham became popular from the LDS (also known as Mormon) prophet Brigham Young was appointed in 1847. The name was continuously popularized by the multiple prestigious universities named after him, opening in1875, 1974, and 2000 respectively, marked on the chart if available. The name was almost exclusively used in Utah and Idaho (also known as Mormon belt) up until 1997. Afterward, the name slowly gained popularity elsewhere as indicated by the percentage within the Mormon belt decreasing._
 
-_AI use reflection_
-**Link** to the original chat:
-**The Process** How exactly did you use the tool?
-**The Impact**  How did using AI impact your learning?
+_You may notice a lack of data from 1988 to 1992, this has been removed from the chart due to insufficient information within the records._
 
 ```{python}
-# Q2
-
-
+bdf = (
+  df.select("name","year",
+  ratio=(((pl.col("UT")+pl.col("ID"))/pl.col("Total"))*100).cast(pl.UInt8)
+  )
+  .filter((pl.col("name") == "Brigham") & ((pl.col("year") < 1988) | (pl.col("year") > 1992)))
+)
+bplot = (
+  ggplot(bdf,aes(x="year",y="ratio"))
+  +geom_line(color="black")
+  +geom_vline(xintercept=2000,color="red",size="0.5")
+  +geom_vline(xintercept=1974,color="red",size="0.5")
+  +scale_x_continuous(format="d")
+  +labs(
+    title="The name Brigham's popularity",
+    x="Year",
+    y="Percent in Mormon belt"
+  )
+)
+bplot
 ```
 
 <!-- Make sure at least one of your charts includes reference marks!! -->
 
-## QUESTION 3
+## How accurate is the data set? Using the name David
 
-1. __Consider doing some data validation. For the name David, calculate a sum of all 50 states and District of Columbia for each year. Now compare that total to the value in the 'Total' column. In which years, if any, do they not agree?__
+__Consider doing some data validation. For the name David, calculate a sum of all 50 states and District of Columbia for each year. Now compare that total to the value in the 'Total' column. In which years, if any, do they not agree?__
 
-_type your results and analysis here_
-
-_AI use reflection_
-**Link** to the original chat:
-**The Process** How exactly did you use the tool?
-**The Impact**  How did using AI impact your learning?
+_To find this information, multiple steps must be taken. We must first perform our own calculation for each year, as seen in line 3 of the below code. We then compared, for the name David, the data set's listed total with our compared total; as seen in line 5 of the code. The below code compares the two and only accepts instances where the recorded total and the calculated total disagree. As seen below, there is nothing in the displayed table, after confirming the code to work through testing, proves that all years' totals are in agreeance._
 
 ```{python}
-# Q3
-
-
+cdf = (
+  df.select("name","year","Total",
+  calc_total=pl.sum_horizontal(cs.exclude("name", "year", "Total")) #this line of code was difficult, sum was difficult to find syntax for horizontal
+  )
+  .filter(pl.col("name")=="David")
+  .filter((pl.col("Total")!=pl.col("calc_total")))
+)
+cdf
 ```
