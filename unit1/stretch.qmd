@@ -1,0 +1,79 @@
+---
+title: "Client Report - Famous Names"
+subtitle: "Unit 1 Task 3"
+author: "John Wendt"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+    
+---
+
+```{python}
+import polars as pl
+import polars.selectors as cs
+import numpy as np
+from lets_plot import *
+
+LetsPlot.setup_html(isolated_frame=True)
+```
+
+```{python}
+# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html
+
+# Include and execute your code here
+df = pl.read_csv("https://posit.byui.edu/content/0d43d66f-d3b7-4c43-8c36-52e3ed69e7f1/names_year_csv.csv")
+```
+
+
+
+## Stretch: Elliot
+
+__Reproduce the chart Elliot using the data from the names_year.csv file. If, after a couple of hours, you can get the chart close, but not exactly the same, that is okay. You will learn more to the degree you push yourself.__
+
+_Elliot is the name of one of the main characters in the movie_ E.T. _The movie was released and then re-released twice. After each release, as indicated by the dotted lines, the name Elliot spiked among babies. After the final re-release of the movie, the name Elliot continued to rise and peaked at about 2,700 babies per year._
+
+```{python}
+df = (
+  df.select("name","year","Total")
+  .filter(pl.col("name")=="Elliot")
+)
+bro_just_do_the_thing = pl.DataFrame({
+    "x": [1975, 1993, 2009],
+    "y": [2750, 2500, 2750],
+    "label": ["E.T. Released", "Second Release", "Third Release"]
+})
+myplot = (
+  ggplot(df,aes(x="year",y="Total"))
+  +geom_line(aes(color="name"))
+  +scale_x_continuous(format="d")
+  +scale_y_continuous(format="d")
+  +geom_vline(xintercept="1982",color="black",linetype="dashed")
+  +geom_vline(xintercept="1985",color="black",linetype="dashed")
+  +geom_vline(xintercept="2002",color="black",linetype="dashed")
+  +labs(
+    title="Elliot...What?",
+    y=""
+  )
+  +theme(panel_background=element_rect(fill='#dedede'),panel_border=element_rect(color="white"))
+  +geom_text(data=bro_just_do_the_thing,mapping=aes(x="x", y="y", label="label"))
+  +ggsize(1000,500)
+)
+myplot
+```
