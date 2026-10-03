@@ -71,7 +71,7 @@ myplot = (
     title="Elliot...What?",
     y=""
   )
-  +theme(panel_background=element_rect(fill='#dedede'),panel_border=element_rect(color="white"))
+  +theme(panel_background=element_rect(fill='#dedede')panel_border=element_rect(color="white"))
   +geom_text(data=bro_just_do_the_thing,mapping=aes(x="x", y="y", label="label"))
   +ggsize(1000,500)
 )
