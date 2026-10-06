@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="[STUDENT NAME]">
+<meta name="author" content="John Wendt">
 
 <title>Client Report - Flights: Creating New Columns</title>
 <style>
@@ -2235,7 +2235,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
       <div>
       <div class="quarto-title-meta-heading">Author</div>
       <div class="quarto-title-meta-contents">
-               <p>[STUDENT NAME] </p>
+               <p>John Wendt </p>
             </div>
     </div>
       
@@ -2262,7 +2262,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
   <li><a href="#visualizing" id="toc-visualizing">Visualizing</a></li>
   </ul>
 </nav>
-<div id="7d34748e" class="cell" data-execution_count="1">
+<div id="dd10f26c" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
@@ -2275,7 +2275,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>LetsPlot.setup_html(isolated_frame<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<div id="d36b487c" class="cell" data-execution_count="2">
+<div id="ff2760d6" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html</span></span>
@@ -2298,7 +2298,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 <li>All other rows can be assigned a value of ‘Unknown’</li>
 </ol></li>
 </ol>
-<div id="4bf8e5aa" class="cell" data-execution_count="3">
+<div id="4e9fd964" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> (</span>
@@ -2318,7 +2318,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 <ol type="1">
 <li><strong>Divide all the columns by 1000 whose name starts with num_of.</strong> Be sure to first filter out rows that contain problematic values for the columns like -999 or 1500+.</li>
 </ol>
-<div id="dd4d7bae" class="cell" data-execution_count="4">
+<div id="46dd0566" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> (</span>
@@ -2348,7 +2348,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 <li>From April through August, 40% of delayed flights in the NAS category are due to weather. The rest of the months, the proportion rises to 65%</li>
 </ol></li>
 </ol>
-<div id="f588ce6d" class="cell" data-execution_count="5">
+<div id="39c4d6ef" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> (</span>
@@ -2537,7 +2537,7 @@ white-space: pre-wrap;
 <p><em>As described in the prompts above, a dataset on airports has been wrangled to condense months into specific seasons, and correct discrepancies. As seen in prompt 3, delay due to weather is noticeably higher in the darker months (fall and winter) than the others. Spring can be seen to have the lowest average delay and the lowest extreme delay. This can indicate that the most reliable time to fly may be in the Spring months (April-June).</em></p>
 <p><em>It may be noticed that some of these numbers are in the hundreds of thousands, and it must be addressed that these delays are aggregated among sometimes a hundred plane gates at a time, and aggregated among an entire month. Because of this, it can be calculated that a statistic of 450,000 minutes delay averages out to an 18 minute delay in an average airport and a 9 minute delay in larger airports such as LAX; per plane.</em></p>
 <p><em>Observing numerically, most of the averages are similar, all plus or minus 3,000 minutes of the other. This could indicate that weather may only affect delay in extreme cases. This could further be proven by noting that the original data file only tracked delay in extreme weather.</em></p>
-<div id="4d75f73e" class="cell" data-execution_count="6">
+<div id="5754b0b1" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>aplot <span class="op">=</span> (</span>
@@ -2560,7 +2560,7 @@ white-space: pre-wrap;
 //# sourceMappingURL=lets-plot.js.map</script>
    
    
-          <div id="yH2CVs"></div>
+          <div id="kYT0Ju"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -2585,7 +2585,7 @@ white-space: pre-wrap;
        };
    }
    
-   const containerDiv = document.getElementById("yH2CVs");
+   const containerDiv = document.getElementById("kYT0Ju");
    let fig = null;
    
    function renderPlot() {
