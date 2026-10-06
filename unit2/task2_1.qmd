@@ -1,7 +1,7 @@
 ---
 title: "Client Report - Flights: Creating New Columns"
 subtitle: "Unit 2 Task 1"
-author: "[STUDENT NAME]"
+author: "John Wendt"
 format:
   html:
     self-contained: true
