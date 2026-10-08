@@ -1,0 +1,33 @@
+student_id,program,class_format,study_hours,sleep_hours,attendance_pct,quiz_score,project_score,tutoring_sessions,reflection
+1001,Data Science,In person,6.5,7.2,96,88,91,1,Complete
+1002,Computer Science,Online,4.0,6.1,82,74,78,0,Complete
+1003,Business,In person,,6.8,90,81,84,2,Complete
+1004,Data Science,Hybrid,7.5,,94,92,95,1,Complete
+1005,Not reported,Online,3.0,5.5,76,68,,0,Missing
+1006,Computer Science,In person,5.5,7.0,88,,86,1,Complete
+1007,Statistics,Hybrid,8.0,6.5,97,95,93,2,Complete
+1008,Business,Online,2.5,7.8,70,64,72,,Complete
+1009,Data Science,In person,6.0,6.9,-1,87,89,1,Complete
+1010,Computer Science,Hybrid,,7.1,85,79,83,0,Missing
+1011,Statistics,In person,9.0,6.0,98,96,97,3,Complete
+1012,Not reported,Online,3.5,,73,71,69,0,Complete
+1013,Business,Hybrid,5.0,7.4,89,84,,1,Complete
+1014,Data Science,Online,7.0,6.6,92,,94,2,Complete
+1015,Computer Science,In person,4.5,8.0,87,77,82,,Missing
+1016,Statistics,Hybrid,8.5,7.0,95,94,96,2,Complete
+1017,Business,In person,,6.3,81,73,76,1,Complete
+1018,Data Science,Hybrid,6.8,7.6,93,90,92,1,Complete
+1019,Computer Science,Online,3.8,5.9,78,70,,0,Complete
+1020,Statistics,In person,7.8,,96,93,95,2,Missing
+1021,Not reported,Hybrid,5.2,7.3,86,82,85,1,Complete
+1022,Business,Online,2.8,6.7,72,,70,0,Complete
+1023,Data Science,In person,7.2,7.1,94,91,93,,Complete
+1024,Computer Science,Hybrid,,6.4,84,76,80,1,Complete
+1025,Statistics,Online,6.7,7.9,91,89,,1,Complete
+1026,Business,In person,4.2,,83,75,79,0,Missing
+1027,Data Science,Hybrid,8.1,6.8,97,94,96,2,Complete
+1028,Computer Science,Online,3.3,7.5,-1,69,74,0,Complete
+1029,Statistics,In person,7.4,6.2,95,,92,3,Complete
+1030,Not reported,Hybrid,5.7,7.0,88,83,87,1,Complete
+1031,Business,Online,,6.6,75,67,,0,Missing
+1032,Data Science,In person,6.9,,93,90,94,2,Complete
