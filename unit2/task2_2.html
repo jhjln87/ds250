@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="[STUDENT NAME]">
+<meta name="author" content="John Wendt">
 
 <title>Client Report - Flights: Column Aggregation</title>
 <style>
@@ -2235,7 +2235,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
       <div>
       <div class="quarto-title-meta-heading">Author</div>
       <div class="quarto-title-meta-contents">
-               <p>[STUDENT NAME] </p>
+               <p>John Wendt </p>
             </div>
     </div>
       
@@ -2261,7 +2261,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
   <li><a href="#most-delayed-airports" id="toc-most-delayed-airports">Most delayed airports</a></li>
   </ul>
 </nav>
-<div id="913d34a7" class="cell" data-execution_count="1">
+<div id="cbdacbee" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
@@ -2274,7 +2274,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>LetsPlot.setup_html(isolated_frame<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<div id="d7ed160e" class="cell" data-execution_count="2">
+<div id="125c06bf" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html</span></span>
@@ -2289,7 +2289,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 <h2 class="anchored" data-anchor-id="record-frequency">Record frequency</h2>
 <p><strong>Calculate the sample size (i.e. number of rows in the dataset) for each airport in each year</strong>. What do you notice?</p>
 <p><em>As seen in the table below, a majority of the airports have 12 records each year. This could mean that most airports had a record for every 12 months of the year. Also seen in the picture, Atlanta was missing a few reports for the year 2014. This could indicate that some points are missing and need to be updated or that this is towards the end of the data set.</em></p>
-<div id="540e33a7" class="cell" data-execution_count="3">
+<div id="868f7842" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>adf <span class="op">=</span> (</span>
@@ -2322,17 +2322,7 @@ white-space: pre-wrap;
 </thead>
 <tbody>
 <tr class="odd">
-<td>&quot;SFO&quot;</td>
-<td>2009</td>
-<td>12</td>
-</tr>
-<tr class="even">
-<td>&quot;SLC&quot;</td>
-<td>2009</td>
-<td>12</td>
-</tr>
-<tr class="odd">
-<td>&quot;DEN&quot;</td>
+<td>&quot;IAD&quot;</td>
 <td>2006</td>
 <td>12</td>
 </tr>
@@ -2342,38 +2332,48 @@ white-space: pre-wrap;
 <td>12</td>
 </tr>
 <tr class="odd">
-<td>&quot;IAD&quot;</td>
+<td>&quot;ATL&quot;</td>
+<td>2015</td>
+<td>11</td>
+</tr>
+<tr class="even">
+<td>&quot;ORD&quot;</td>
+<td>2015</td>
+<td>12</td>
+</tr>
+<tr class="odd">
+<td>&quot;SAN&quot;</td>
+<td>2010</td>
+<td>12</td>
+</tr>
+<tr class="even">
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+<tr class="odd">
+<td>&quot;SFO&quot;</td>
 <td>2012</td>
 <td>12</td>
 </tr>
 <tr class="even">
-<td>…</td>
-<td>…</td>
-<td>…</td>
-</tr>
-<tr class="odd">
-<td>&quot;SAN&quot;</td>
-<td>2015</td>
-<td>12</td>
-</tr>
-<tr class="even">
-<td>&quot;IAD&quot;</td>
-<td>2015</td>
-<td>12</td>
-</tr>
-<tr class="odd">
-<td>&quot;SAN&quot;</td>
-<td>2013</td>
-<td>12</td>
-</tr>
-<tr class="even">
-<td>&quot;IAD&quot;</td>
-<td>2010</td>
-<td>12</td>
-</tr>
-<tr class="odd">
 <td>&quot;DEN&quot;</td>
-<td>2008</td>
+<td>2005</td>
+<td>12</td>
+</tr>
+<tr class="odd">
+<td>&quot;ORD&quot;</td>
+<td>2005</td>
+<td>12</td>
+</tr>
+<tr class="even">
+<td>&quot;DEN&quot;</td>
+<td>2006</td>
+<td>12</td>
+</tr>
+<tr class="odd">
+<td>&quot;SLC&quot;</td>
+<td>2014</td>
 <td>12</td>
 </tr>
 </tbody>
@@ -2386,7 +2386,7 @@ white-space: pre-wrap;
 <h2 class="anchored" data-anchor-id="plane-delays">Plane delays</h2>
 <p><strong>Which airport has the worst delays?</strong> Describe the metric you chose, and why you chose it to determine the “worst” airport. Your answer should include a summary table that lists (for each airport) the total number of flights, total number of delayed flights, proportion of delayed flights, and average delay time in hours.</p>
 <p><em>This took a bit to wrangle, but shows insight. When sorted by total delayed flights, Atlanta and O’Hare are listed on top. When sorted by delay percentage, San Francisco is on top with 80-90 percent of their flights delayed. When sorted by average delay hours, O’Hare is the main contender with a high average of 1.5 hours of delay. In general, it is seen that the airports with the most delay are the biggest airports with the most plane traffic.</em></p>
-<div id="0898953b" class="cell" data-execution_count="4">
+<div id="5406f9c5" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>bdf <span class="op">=</span> (</span>
@@ -2528,7 +2528,7 @@ white-space: pre-wrap;
 <h2 class="anchored" data-anchor-id="most-delayed-airports">Most delayed airports</h2>
 <p><strong>Create a barplot showing the proportion of all flights that are delayed at each airport. Describe what you learn from this graph.</strong></p>
 <p><em>This graph is quite simple, it compares all the airports and their average delay across the entire dataframe. General statistics cannot immediately be gleaned from this chart, but it can be compared which major airports are more favorable for air travel. Salt Lake City beats out all other airports by a good margin, at only 30% of flights being delayed. San Francisco is the most delayed, although planes there are only delayed 50% of the time.</em></p>
-<div id="fbcb5a65" class="cell" data-execution_count="5">
+<div id="a36ff28a" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>cdf <span class="op">=</span> (</span>
@@ -2557,7 +2557,7 @@ white-space: pre-wrap;
 //# sourceMappingURL=lets-plot.js.map</script>
    
    
-          <div id="wi2Qlu"></div>
+          <div id="3bsjkW"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -2582,7 +2582,7 @@ white-space: pre-wrap;
        };
    }
    
-   const containerDiv = document.getElementById("wi2Qlu");
+   const containerDiv = document.getElementById("3bsjkW");
    let fig = null;
    
    function renderPlot() {
