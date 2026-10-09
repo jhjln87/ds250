@@ -27,6 +27,7 @@ execute:
 
 ```{python}
 import polars as pl
+import polars.selectors as cs
 import requests #new for reading in JSON
 import io       #new for reading in JSON
 import numpy as np
@@ -46,53 +47,60 @@ df = pl.read_json(io.BytesIO(response.content))
 ```
 
 
-## QUESTION 1
+## Record frequency
 
 __Calculate the sample size (i.e. number of rows in the dataset) for each airport in each year__. What do you notice?
 
-_Describe your results and analysis here_
-
-_AI use reflection_
-**Link** to the original chat:
-**The Process** How exactly did you use the tool?
-**The Impact**  How did using AI impact your learning?
+_As seen in the table below, a majority of the airports have 12 records each year. This could mean that most airports had a record for every 12 months of the year. Also seen in the picture, Atlanta was missing a few reports for the year 2014. This could indicate that some points are missing and need to be updated or that this is towards the end of the data set._
 
 ```{python}
-# Include and execute your code here
-
-
+adf = (
+  df.group_by(["airport_code","year"])
+  .agg(pl.len().alias("sample_size"))
+)
+adf
 ```
 
-## QUESTION 2
+## Plane delays
 
 __Which airport has the worst delays?__ Describe the metric you chose, and why you chose it to determine the “worst” airport. Your answer should include a summary table that lists (for each airport) the total number of flights, total number of delayed flights, proportion of delayed flights, and average delay time in hours. 
 
-_Describe your results and analysis here_
-
-_AI use reflection_
-**Link** to the original chat:
-**The Process** How exactly did you use the tool?
-**The Impact**  How did using AI impact your learning?
+_This took a bit to wrangle, but shows insight. When sorted by total delayed flights, Atlanta and O'Hare are listed on top. When sorted by delay percentage, San Francisco is on top with 80-90 percent of their flights delayed. When sorted by average delay hours, O'Hare is the main contender with a high average of 1.5 hours of delay. In general, it is seen that the airports with the most delay are the biggest airports with the most plane traffic._
 
 ```{python}
-# Include and execute your code here
-
-
+bdf = (
+  df.with_columns(cs.starts_with("num_of_delays").replace({"-999":0,None:0}))
+  .with_columns(cs.starts_with("num_of_delays").cast(pl.String).str.replace("1500+","1500",literal=True))
+  .with_columns(cs.starts_with("num_of_delays").cast(pl.Int64))
+  .with_columns(pl.sum_horizontal(cs.starts_with("num_of_delays")).alias("total_delayed_flights"))
+  .with_columns((100*(pl.col("total_delayed_flights")/(pl.col("num_of_flights_total")))).alias("delay_percentage"))
+  .with_columns(((pl.sum_horizontal(cs.starts_with("minutes_delayed")))/60/(pl.col("total_delayed_flights"))).alias("avg_delay_hrs"))
+  .select("airport_code","year","num_of_flights_total","total_delayed_flights","delay_percentage","avg_delay_hrs")
+  .sort(by=["delay_percentage"],descending=True)
+)
+bdf
 ```
 
-## QUESTION 3
+## Most delayed airports
 
 __Create a barplot showing the proportion of all flights that are delayed at each airport. Describe what you learn from this graph.__  
 
-_Describe your results and analysis here_
-
-_AI use reflection_
-**Link** to the original chat:
-**The Process** How exactly did you use the tool?
-**The Impact**  How did using AI impact your learning?
+_This graph is quite simple, it compares all the airports and their average delay across the entire dataframe. General statistics cannot immediately be gleaned from this chart, but it can be compared which major airports are more favorable for air travel. Salt Lake City beats out all other airports by a good margin, at only 30% of flights being delayed. San Francisco is the most delayed, although planes there are only delayed 50% of the time._
 
 ```{python}
-# Include and execute your code here
-
-
+cdf = (
+  bdf.group_by(["airport_code"])
+  .agg(pl.col(["num_of_flights_total","total_delayed_flights"]).sum(),pl.col(["delay_percentage","avg_delay_hrs"]).mean())
+  .sort(by=["delay_percentage"])
+)
+cplot = (
+  ggplot(cdf,aes(x="airport_code",y="delay_percentage"))
+  +geom_bar(stat="identity")
+  +labs(
+    x="Airport",
+    y="Delayed flights per 100 flights",
+    title="Which airport delays the most?"
+  )
+)
+cplot
 ```
