@@ -1,7 +1,7 @@
 ---
 title: "Client Report - Missing values"
 subtitle: "Unit 2 Task 3"
-author: "[STUDENT NAME]"
+author: "John Wendt"
 format:
   html:
     self-contained: true
@@ -27,6 +27,7 @@ execute:
 
 ```{python}
 import polars as pl
+import polars.selectors as cs
 import requests #new for reading in JSON
 import io       #new for reading in JSON
 import numpy as np
@@ -42,53 +43,73 @@ response = requests.get(url)
 df = pl.read_json(io.BytesIO(response.content))
 ```
 
-## QUESTION 1
+## Nullify non-values
 
 1. __Convert values to missing__ Start with a fresh copy of the flights dataset by reading it in from the link provided above (as opposed to starting with the dataset you ended with in the last assignment). Identify data values that are problematic, non-sense or impossible and change them to be missing. In your report include one record example (one row) from your clean data, in the raw JSON format. Your example should display at least one missing value so that we can verify it was done correctly. (Note: JSON will convert NaN's to null). Describe your process for finding values that needed to be changed, and how you changed them.
 
-_Describe your results and analysis here_
-
-_AI use reflection_
-**Link** to the original chat:
-**The Process** How exactly did you use the tool?
-**The Impact**  How did using AI impact your learning?
+_The first thing done for this process was to ensure all non-values were set to_ null _. Values such as -999 and n/a were replaced with _ null _, while 1500+ was kept as it represents more than 1500 rather than a non-value. Then, all values were filtered so that only rows with a null value remained. Seen below is the very first line of this filtered dataset, in raw JSON format. See that there is a _ null _in the num\_of\_delays\_late\_aircraft value._
 
 ```{python}
-# Include and execute your code here
-
-
+adf = (
+  df.with_columns(cs.starts_with("num_of","minutes").replace("-999",None))
+  .with_columns(pl.col("month").replace("n/a",None))
+  .filter(pl.any_horizontal(pl.col("*").is_null()))
+)
+adf.head(1).write_json()
 ```
 
-## QUESTION 2
+## Replace non-values
 
 2. __Filling in missing data__ For all the "minutes_delayed" columns, fill in any missing values with the median of that column. For the "num_of" columns, fill in missing values with that column's mean.
 
-_Nothing to write/report for this question_
+_This time, the values were filled rather than emptied. As seen in the raw JSON, the value which used to be_ null _is now a numeric value._
 
-_AI use reflection_
-**Link** to the original chat:
-**The Process** How exactly did you use the tool?
-**The Impact**  How did using AI impact your learning?
 
 ```{python}
-# Include and execute your code here
+bdf = (
+  df.with_columns(cs.starts_with("num_of","minutes").replace(-999,None))
+  .with_columns(
+    pl.when(cs.starts_with("minutes").is_null())
+    .then(cs.starts_with("minutes").median())
+    .otherwise(cs.starts_with("minutes")),
 
-
+    pl.when(cs.starts_with("num_of").is_null())
+    .then(cs.starts_with("num_of").mean())
+    .otherwise(cs.starts_with("num_of"))
+  )
+)
+bdf.head(1).write_json()
 ```
 
-## QUESTION 3
+## Aggregate monthly delays
  
 3. __Display a histogram for num_of_delays_carrier and for minutes_delayed_nas (2 separate histograms in total). Comment on the shape of each one. Also report the mean of each of these columns now that missing values have been filled in.__
 
-_Describe your results and analysis here_
-
-_AI use reflection_
-**Link** to the original chat:
-**The Process** How exactly did you use the tool?
-**The Impact**  How did using AI impact your learning?
+_Both histograms generally follow a skewed left shape, aside from an outlier in the delays caused by carriers. This general shape indicates that a majority of the aggregations are generally smaller, further indicating that delays are more commonly less severe and/or common. Also seen is a vertical line indicating the mean (average) of these delays. It must be reported the influx in the first histogram around 1500 delays. This is because any delay above 1500 has been aggregated into a single 1500 statistic._
 
 ```{python}
-# Include and execute your code here
-
-
+cdf = (
+  bdf.with_columns(cs.starts_with("num_of","minutes").cast(pl.String).str.replace("1500+","1500",literal=True).cast(pl.Float32))
+)
+bro_just_do_the_thing = cdf.select(pl.col("num_of_delays_carrier").mean()).item()
+aplot = (
+  ggplot(cdf, aes(x="num_of_delays_carrier"))
+  +geom_histogram()
+  +geom_vline(xintercept=bro_just_do_the_thing,color="red")
+  +labs(
+    x="Monthly delays caused by the carriers",
+    y="Count of months recorded"
+  )
+)
+bplot = (
+  ggplot(cdf, aes(x="minutes_delayed_nas"))
+  +geom_histogram()
+  +geom_vline(xintercept=bro_just_do_the_thing,color="red")
+  +labs(
+    x="Monthly delays caused by the National Airspace System",
+    y="Count of months recorded"
+  )
+)
+aplot.show()
+bplot.show()
 ```
