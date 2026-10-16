@@ -72,7 +72,6 @@ bdf = (
     pl.when(cs.starts_with("minutes").is_null())
     .then(cs.starts_with("minutes").median())
     .otherwise(cs.starts_with("minutes")),
-
     pl.when(cs.starts_with("num_of").is_null())
     .then(cs.starts_with("num_of").mean())
     .otherwise(cs.starts_with("num_of"))

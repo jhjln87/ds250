@@ -1,0 +1,114 @@
+---
+title: "Client Report - Missing values"
+subtitle: "Unit 2 Stretch"
+author: "John Wendt"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+    
+---
+
+```{python}
+import polars as pl
+import polars.selectors as cs
+import requests #new for reading in JSON
+import io       #new for reading in JSON
+import numpy as np
+from lets_plot import *
+
+LetsPlot.setup_html(isolated_frame=True)
+```
+
+
+```{python}
+url = "https://raw.githubusercontent.com/byuidatascience/data4missing/master/data-raw/flights_missing/flights_missing.json"
+response = requests.get(url)
+df = pl.read_json(io.BytesIO(response.content))
+
+#code used in task 2:3
+df = (
+  df.with_columns(cs.starts_with("num_of","minutes").replace(-999,None))
+  .with_columns(
+    pl.when(cs.starts_with("minutes").is_null())
+    .then(cs.starts_with("minutes").median())
+    .otherwise(cs.starts_with("minutes")),
+    pl.when(cs.starts_with("num_of").is_null())
+    .then(cs.starts_with("num_of").mean())
+    .otherwise(cs.starts_with("num_of"))
+  )
+  .with_columns(cs.starts_with("num_of","minutes").cast(pl.String).str.replace("1500+","1500",literal=True).cast(pl.Float32))
+)
+```
+
+## Worst delay types
+
+1. __Which delay is the worst delay?__ Keep working with the cleaned dataset you created in the previous task. Compare the proportion of flights delayed due to Carrier, to Security, and to Late Aircraft. Show this comparison in a Chart and a Table. Describe your results.
+
+_As seen in the below chart, delays are most commonly due to individual aircrafts. The next most common is due to carriers as a whole, and both wholly trump delays due to security. This can be further observed in the chart where we can actually understand numerically. Security delays only happen 5000 times across all airports and all years throughout the data set, yielding to only 0.29% of all delays._
+
+_It must be noted that in the pie chart, it seems as if there is no slice for security, this is due to its size compared to the other two. Pay close attention to the distance between the other two silces and you will notice that one divider seems to be larger than the other. This is where the slice for security based delays reside. This further argues for its insignificance._
+
+_AI use reflection_ __Link__ to the original chat: https://share.gemini.google/8y6cafiNcvF2 __The Process__ At first, I was a bit confused about the sub-task presented, and due to a long day, didn't have much critical thinking left. I turned to AI to help me understand what I was supposed to do. I also used it to help me construct a pie chart. __The Impact__ I was able to start this assignment without any issue which helped me get in a data science mindset so I could wrangle and present data well.
+
+```{python}
+df = df.unpivot(
+  index=["airport_code","airport_name","month","year"],
+  on=["num_of_delays_carrier","num_of_delays_security","num_of_delays_late_aircraft"],
+  variable_name="delay_type",
+  value_name="number_of_delays"
+)
+adf = (
+  df.group_by("delay_type")
+  .agg((pl.col("number_of_delays").cast(pl.Int32).sum()).alias("total_delays"))
+  .with_columns((100 * pl.col("total_delays") / pl.col("total_delays").sum()).round(2).alias("percentage"))
+)
+aplot = (
+  ggplot(adf,aes(y="total_delays",fill="delay_type"))
+  +geom_bar(stat="identity",width=1)
+  +coord_polar(theta="y")
+  +theme_void()
+)
+aplot.show()
+adf
+```
+
+## Individual airports
+
+2. Create another chart that shows the proportion of delays for each reason (Carrier, Security, and Late Aircraft) across all 7 airports. Describe your results.
+
+_The chart below shows a similar trend also shown by the pie chart, that being the percentage of each delay type. Delays by aircraft and delays by carrier are both shown, and delays by security are near invisible, only seen on a good computer. However, when hovering over each bar, the values can be seen for each airport. Looking at the airports individually, it can be noted that there are three airports with significantly higher delays than the others. Those three are the Atlanta, Ohare, and Denver airports. These could be the highest simply due to their popularity as layover airports, thus increasing the traffic there._
+
+```{python}
+bdf = (
+  df.group_by(["airport_code","delay_type"])
+  .agg((pl.col("number_of_delays").cast(pl.Int32).sum()).alias("total_delays"))
+  .with_columns((100 * pl.col("total_delays") / pl.col("total_delays").sum().over("airport_code")).round(2).alias("percentage"))
+  .sort(by=["total_delays"])
+)
+bplot = (
+  ggplot(bdf,aes(x="airport_code",y="total_delays",fill="delay_type"))
+  +geom_bar(stat="identity")
+  +labs(
+    x="Airports (by code)",
+    y="Delays"
+  )
+)
+bplot
+```
