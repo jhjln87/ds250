@@ -59,7 +59,7 @@ results = pl.read_database(q, con, infer_schema_length=None)
 results
 ```
 
-## QUESTION 1
+## Yearly batting average
 
 __Use the provided code above to read in the batting table. Then, with Python Polars manipulate the 'results' dataframe to calculate the number of at bats and the batting average for each year a player played. Filter the data frame to only include players with at least 10 at bats that year. Sort the dataframe from highest batting average to lowest, and then by playerid alphabetically. Show the top 5 results in your report.__
 
@@ -83,7 +83,7 @@ adf.head(5)
 ```
 
 
-## QUESTION 2
+## Career batting average
 
 __Use the provided code above to read in the batting table. Then, with Python Polars manipulate the 'results' dataframe to calculate the batting average for each player over their entire career (all years combined). Only include players with at least 100 at bats over their entire career. Sort the dataframe from highest batting average to lowest, and then by playerid alphabetically. Show the top 5 results in your report.__ 
 
