@@ -1,0 +1,100 @@
+---
+title: "Client Report - Baseball Database SQL Query"
+subtitle: "Unit 3 Task 2"
+author: "John Wendt"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+    
+---
+
+
+```{python}
+import polars as pl
+import numpy as np
+import sqlite3
+from lets_plot import *
+
+LetsPlot.setup_html(isolated_frame=True)
+```
+
+
+```{python}
+# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html
+
+# Include and execute your code here
+sqlite_file = 'lahmansbaseballdb.sqlite'
+# this file must be in the same location as your .qmd or .py file
+con = sqlite3.connect(sqlite_file)
+```
+
+## Top five yearly batters?
+
+__Write an SQL query that provides playerID, yearID, and batting average for players with at least 1 at bat that year. Sort the table from highest batting average to lowest, and then by playerid alphabetically. Show the top 5 results in your report.__
+
+__Below is a table of the top baseball players when it comes to batting average, that is, the amount of hits per time at bat. As seen below, all of the players have a 100% batting average. This seems off, as there is no way some people are this perfect? After testing around, it can be found that these players have only been at bat once, and hit that one time. Top players do not truly begin consistently missing until 4 or 5 times at bat. While testing commenced, it was noted that using SQL rather than Polars to do the initial data wrangling was much faster._
+
+```{python}
+q = """
+SELECT playerID, yearID, (1.0*H/AB) AS batting_average FROM batting
+WHERE AB >= 1
+ORDER BY batting_average DESC, playerID ASC
+LIMIT 5
+    """
+results = pl.read_database(q, con)
+results
+```
+
+
+## Top five yearly batters.
+
+__Use the same query as above, but only include players with at least 10 at bats that year. Print the top 5 results.__  
+
+_As seen in this table below, batting average is now significantly lower, but the more likely case is that it is now significantly more accurate. When comparing this table to the previous report's table on batting average, the data nearly agrees, indicating more accuracy and truth to these averages._
+
+```{python}
+q = """
+SELECT playerID, yearID, (1.0*H/AB) AS batting_average FROM batting
+WHERE AB >= 10
+ORDER BY batting_average DESC, playerID ASC
+LIMIT 5
+    """
+results = pl.read_database(q, con)
+results
+```
+
+
+## Top five batters of all time.
+
+__Now modify the SQL query to calculate the batting average for players over their entire careers (all years combined). Only include players with at least 100 at bats over their entire career, and print the top 5 results.__
+
+_As seen in the table below, players' batting average is much lower over their entire career, incidating that sometimes players may have great years compared to their entire career's average. When comparing this table to last report's table, all data is nearly equal. It must be noticed that the latest year in this table is 1915, indicating there could be some change in the strategy of baseball/this database._
+
+```{python}
+q = """
+SELECT playerID, yearID, (1.0 * SUM(H) / SUM(AB)) AS batting_average FROM batting
+GROUP BY playerID
+HAVING SUM(AB) >= 100
+ORDER BY batting_average DESC, playerID ASC
+LIMIT 5
+    """
+results = pl.read_database(q, con)
+results
+```
