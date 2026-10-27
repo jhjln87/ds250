@@ -1,0 +1,140 @@
+---
+title: "Client Report - Joins"
+subtitle: "Unit 3 Task 3"
+author: "John Wendt"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+    
+---
+
+```{python}
+import polars as pl
+import numpy as np
+import sqlite3
+from lets_plot import *
+
+LetsPlot.setup_html(isolated_frame=True)
+```
+
+
+```{python}
+# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html
+
+# Include and execute your code here
+sqlite_file = 'lahmansbaseballdb.sqlite'
+# this file must be in the same location as your .qmd or .py file
+con = sqlite3.connect(sqlite_file)
+```
+
+## BYU-I Alum's Baseball Salary
+
+__Write an SQL query that pulls in the the salaries table and the collegeplaying table (and any other tables you might need) and store them in polars dataframes. In Python Polars, combine the dataframes to create a list of baseball players who attended BYU-Idaho. The new table should contain five columns: playerID, schoolID, salary, yearID and teamID associated with each salary.__
+
+_The below table lists all data on baseball players who attended Brigham Young University-Idaho. It may be noted that only two players are visible, and when sorting by unique players, only these two show. This indicates that only two players originated from BYU-I. However, it must also be noted that one of these players began their career in 1991, which means they actually originated from Ricks College, and the second player began their career in 2001, immediately after the college was renamed to BYU-I. It must also be noted that each of these players are only recorded in this database for up to two years each. This could indicate that the average baseball career is not very long. Also noted is that each players salary steadily increased year by year._
+
+```{python}
+query1 = """
+SELECT *
+FROM salaries
+"""
+query2 = """
+SELECT *
+FROM collegeplaying
+"""
+adf = pl.read_database(query1, con)
+bdf = pl.read_database(query2, con)
+df = adf.join(
+  bdf,
+  on="playerID",
+  how="inner"
+)
+df = (
+  df.filter(pl.col("schoolID").str.contains("byuid"))
+  .select("playerID","schoolID","salary",pl.col("yearID_right").alias("yearID"),"teamID")
+  .sort(by=["yearID","salary"])
+  # .unique(subset="playerID")
+)
+df
+```
+
+
+## High Paying Teams Throughout the Years
+
+1. Pick any two baseball teams and compare them using a metric of your choice (average salary, home runs, number of wins, etc). Be creative! Write an SQL query to read in the table(s) you need, then use polars to manipulate the data. Finally, make a graph using Lets-Plot to visualize the comparison. What do you learn?
+
+_Below is shown the average pay rate for the two highest paying baseball teams: the Los Angeles Dodgers and the New York Yankees. It can be observed that up to the year 2000, both teams paid roughly equal. However, between 1998 and 2005 a huge jump was made both in general pay and the difference between the two. During this time, it was much more favorable to play for the New York Yankees. However, both were desired as pay multiplied by a magnitude of 4.5. After this period, both teams' pay stagnated for nearly a decade, until the Los Angeles Dodgers boosted in pay and again nearly equaled the New York Yankees._
+
+_Shown below is a relationship between average team salary and year. The relationship between average salary and win count was also investigated. However, no correlation was found._
+
+```{python}
+query1 = """
+SELECT teamID,yearID,salary
+FROM salaries
+"""
+query2 = """
+SELECT teamID,yearID,W
+FROM teams
+"""
+adf = pl.read_database(query1, con)
+bdf = pl.read_database(query2, con)
+adf = (
+  adf.group_by(["teamID", "yearID"])
+  .agg(pl.col("salary").mean())
+)
+df = bdf.join(
+  adf,
+  on=["teamID","yearID"],
+  how="inner"
+)
+df = (
+  df.filter((pl.col("teamID")=="LAN")|(pl.col("teamID")=="NYA"))
+  .with_columns(
+    pl.col("teamID").replace({"LAN":"LA Dodgers","NYA":"NY Yankees"}).alias("Team Name")
+  )
+  .select("Team Name","yearID","W","salary")
+  .sort(by="yearID")
+)
+aplot = (
+  ggplot(df,aes(x="yearID",y="salary",color="Team Name"))
+  +geom_line()
+  +scale_x_continuous(format="d")
+  +scale_y_continuous(format="s")
+  +labs(
+    title="Highest Paying Baseball Teams by Year",
+    x="Year",
+    y="Average Salary"
+  )
+)
+bplot = (
+  ggplot(df.sort(by="W"),aes(x="W",y="salary",color="Team Name"))
+  +geom_line()
+  +scale_x_continuous(format="d")
+  +scale_y_continuous(format="s")
+  +labs(
+    title="Highest Paying Baseball Teams by Wins",
+    x="Win Count",
+    y="Average Salary"
+  )
+)
+aplot.show()
+```
+
+
