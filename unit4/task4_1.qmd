@@ -1,0 +1,102 @@
+---
+title: "Client Report - Can You Predict That?"
+subtitle: "Unit 4 Task 1"
+author: "John Wendt"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+    
+---
+
+```{python}
+import polars as pl
+import numpy as np
+from lets_plot import *
+from sklearn.model_selection import train_test_split
+from sklearn import metrics
+from polars import selectors as cs
+# add the additional libraries you need to import for ML here
+
+LetsPlot.setup_html(isolated_frame=True)
+
+```
+
+
+```{python}
+df = pl.read_csv("dwellings_ml.csv")
+```
+
+## Determining variables
+
+1. __Take time to get to know your data.__ Based on some initial exploration, identify 3 variables in the dataset you think will have strong predictive ability for determining if a house was built before 1980. Explain/justify the reasoning behind your guesses (for example with plots).
+
+_After analyzing the database on Denver, Colorado homes, four metrics outstanding were tested on. Below is shown a table of specific metrics averaged and turned into percentages for nearly 23,000 different homes. In order to pick metrics to run a decision tree (aka train an AI) on, metrics must be found which have the most differentiation between each other. As seen in the talbe below, there are three metrics which can be most effective when guessing if a home is built before 1980. Those metrics include:_ 
+
+- _The home was built with only one story._
+- _The home does not have an attached garage._
+- _The home received a C grade._
+
+_The first two metrics are likely caused by general building trends. Modern homes are built using models rather than individually architected and most often seem to have multiple stories. When houses have multiple stories, they nearly always have a garage on the first floor. Old homes also always seem to have either no garage or the owner has built a garage outside. The second metric is that these old homes have received a C grade. This could indicaate the homes have been used well. After research, it also could indicate that it has not been graded for over a year, which further increases the likelyhood of it being an older house. These three metrics will be used in the training data._
+
+```{python}
+possible = ["arcstyle_ONE-STORY","gartype_Att","quality_C","finbsmnt"]
+myAgg = (
+  df.select(possible + ["before1980"])
+  .group_by("before1980")
+  .agg(pl.col(possible).mean())
+  .with_columns(
+    pl.col("before1980").cast(pl.Boolean).alias("Built before 1980"),
+    (pl.col("arcstyle_ONE-STORY")*177.62).cast(pl.Int8).alias("One story"),
+    (pl.col("gartype_Att")*165.75).cast(pl.Int8).alias("Attached garage"),
+    (pl.col("quality_C")*123.41).cast(pl.Int8).alias("Quality grade C"),
+    (pl.col("finbsmnt")/3.48).cast(pl.Int8).alias("Finished basement"),
+  )
+  .unpivot(index="Built before 1980", on=["One story","Attached garage","Quality grade C","Finished basement"], variable_name="Metric", value_name="Percentage")
+)
+(
+  ggplot(myAgg,aes(x="Metric",y="Percentage",fill="Built before 1980"))
+  +geom_bar(stat="identity",position="dodge")
+  +labs(
+    title="Percentage differences of homes before and after 1980"
+  )
+  +scale_fill_manual(values={True:'black',False:'#a5a5a5'})
+).show()
+```
+
+2. __Build a classification model labeling houses as being built “before 1980” or “during or after 1980”.__ Your goal is to reach or exceed 90% accuracy. Report your final model choice and any other model parameters you may have tweaked (train-test split ratio, tuning parameters, etc).  
+
+_type your write-up and analysis here_
+
+```{python}
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+
+X_train, X_test, y_train, y_test = train_test_split(
+  df.select(["arcstyle_ONE-STORY","gartype_Att","quality_C"]),
+  df["before1980"],
+  test_size=0.2,
+  random_state=6352
+)
+model = DecisionTreeClassifier(max_depth=3, random_state=42)
+model.fit(X_train, y_train)
+predict = model.predict(X_test)
+print(f"Accuracy: {(accuracy_score(y_test,predict)):.4f}")
+```
+
