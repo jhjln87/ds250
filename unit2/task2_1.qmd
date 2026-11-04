@@ -66,11 +66,12 @@ df = (
     .otherwise(pl.lit("Unknown"))
   ).alias("Season"))
 )
+df
 ```
 
 ## Filtration and division
 
-1. __Divide all the columns by 1000 whose name starts with num_of.__ Be sure to first filter out rows that contain problematic values for the columns like -999 or 1500+.
+2. __Divide all the columns by 1000 whose name starts with num_of.__ Be sure to first filter out rows that contain problematic values for the columns like -999 or 1500+.
 
 ```{python}
 df = (
@@ -85,11 +86,12 @@ df = (
   .with_columns(pl.col("num_of_delays_carrier").cast(pl.Int64))
   .with_columns(cs.starts_with("num_of")/1000)
 )
+df
 ```
 
 ## Correcting data
 
-1. According to the BTS website, the “Weather” category only accounts for severe weather delays. Mild weather delays are not counted in the “Weather” category, but are actually included in both the “nas” and “late_aircraft” categories. __Using the columns you modified in the bullet above, your job is to create a new column that calculates the total number of flights (in 1,000's) delayed by weather (both severe and mild).__ Show your work by printing the first 5 rows of the dataset. Use these three rules for your calculations:  
+3. According to the BTS website, the “Weather” category only accounts for severe weather delays. Mild weather delays are not counted in the “Weather” category, but are actually included in both the “nas” and “late_aircraft” categories. __Using the columns you modified in the bullet above, your job is to create a new column that calculates the total number of flights (in 1,000's) delayed by weather (both severe and mild).__ Show your work by printing the first 5 rows of the dataset. Use these three rules for your calculations:  
 
     a. 100% of delayed flights in the Weather category are due to weather  
     a. 30% of all delayed flights in the "late_aircraft" category are due to weather  
@@ -111,7 +113,7 @@ df.head()
 
 ## Visualizing
 
-1. __Using the new weather variable calculated above, create a boxplot showing the distribution of flights delayed by weather for each season. Describe what you learn from this graph.__    
+4. __Using the new weather variable calculated above, create a boxplot showing the distribution of flights delayed by weather for each season. Describe what you learn from this graph.__    
 
 _As described in the prompts above, a dataset on airports has been wrangled to condense months into specific seasons, and correct discrepancies. As seen in prompt 3, delay due to weather is noticeably higher in the darker months (fall and winter) than the others. Spring can be seen to have the lowest average delay and the lowest extreme delay. This can indicate that the most reliable time to fly may be in the Spring months (April-June)._
 

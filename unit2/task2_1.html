@@ -2262,7 +2262,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
   <li><a href="#visualizing" id="toc-visualizing">Visualizing</a></li>
   </ul>
 </nav>
-<div id="dd10f26c" class="cell" data-execution_count="1">
+<div id="0f37cbb0" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
@@ -2275,7 +2275,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>LetsPlot.setup_html(isolated_frame<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<div id="ff2760d6" class="cell" data-execution_count="2">
+<div id="204ae39c" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html</span></span>
@@ -2298,7 +2298,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 <li>All other rows can be assigned a value of ‘Unknown’</li>
 </ol></li>
 </ol>
-<div id="4e9fd964" class="cell" data-execution_count="3">
+<div id="f2a41ca0" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> (</span>
@@ -2309,16 +2309,294 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    .when((pl.col(<span class="st">&quot;month&quot;</span>)<span class="op">==</span><span class="st">&quot;October&quot;</span>)<span class="op">|</span>(pl.col(<span class="st">&quot;month&quot;</span>)<span class="op">==</span><span class="st">&quot;November&quot;</span>)<span class="op">|</span>(pl.col(<span class="st">&quot;month&quot;</span>)<span class="op">==</span><span class="st">&quot;December&quot;</span>)).then(pl.lit(<span class="st">&quot;Fall&quot;</span>))</span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    .otherwise(pl.lit(<span class="st">&quot;Unknown&quot;</span>))</span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  ).alias(<span class="st">&quot;Season&quot;</span>))</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+text-align: right;
+white-space: pre-wrap;
+}
+</style>
+<small>shape: (924, 18)</small>
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">airport_code</th>
+<th data-quarto-table-cell-role="th">airport_name</th>
+<th data-quarto-table-cell-role="th">month</th>
+<th data-quarto-table-cell-role="th">year</th>
+<th data-quarto-table-cell-role="th">num_of_flights_total</th>
+<th data-quarto-table-cell-role="th">num_of_delays_carrier</th>
+<th data-quarto-table-cell-role="th">num_of_delays_late_aircraft</th>
+<th data-quarto-table-cell-role="th">num_of_delays_nas</th>
+<th data-quarto-table-cell-role="th">num_of_delays_security</th>
+<th data-quarto-table-cell-role="th">num_of_delays_weather</th>
+<th data-quarto-table-cell-role="th">num_of_delays_total</th>
+<th data-quarto-table-cell-role="th">minutes_delayed_carrier</th>
+<th data-quarto-table-cell-role="th">minutes_delayed_late_aircraft</th>
+<th data-quarto-table-cell-role="th">minutes_delayed_nas</th>
+<th data-quarto-table-cell-role="th">minutes_delayed_security</th>
+<th data-quarto-table-cell-role="th">minutes_delayed_weather</th>
+<th data-quarto-table-cell-role="th">minutes_delayed_total</th>
+<th data-quarto-table-cell-role="th">Season</th>
+</tr>
+<tr class="even">
+<td>str</td>
+<td>str</td>
+<td>str</td>
+<td>i64</td>
+<td>i64</td>
+<td>str</td>
+<td>i64</td>
+<td>i64</td>
+<td>i64</td>
+<td>i64</td>
+<td>i64</td>
+<td>i64</td>
+<td>i64</td>
+<td>i64</td>
+<td>i64</td>
+<td>i64</td>
+<td>i64</td>
+<td>str</td>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>&quot;ATL&quot;</td>
+<td>&quot;Atlanta, GA: Hartsfield-Jackso…</td>
+<td>&quot;January&quot;</td>
+<td>2005</td>
+<td>35048</td>
+<td>&quot;1500+&quot;</td>
+<td>-999</td>
+<td>4598</td>
+<td>10</td>
+<td>448</td>
+<td>8355</td>
+<td>116423</td>
+<td>104415</td>
+<td>207467</td>
+<td>297</td>
+<td>36931</td>
+<td>465533</td>
+<td>&quot;Winter&quot;</td>
+</tr>
+<tr class="even">
+<td>&quot;DEN&quot;</td>
+<td>&quot;Denver, CO: Denver Internation…</td>
+<td>&quot;January&quot;</td>
+<td>2005</td>
+<td>12687</td>
+<td>&quot;1041&quot;</td>
+<td>928</td>
+<td>935</td>
+<td>11</td>
+<td>233</td>
+<td>3153</td>
+<td>53537</td>
+<td>70301</td>
+<td>36817</td>
+<td>363</td>
+<td>21779</td>
+<td>182797</td>
+<td>&quot;Winter&quot;</td>
+</tr>
+<tr class="odd">
+<td>&quot;IAD&quot;</td>
+<td>&quot;&quot;</td>
+<td>&quot;January&quot;</td>
+<td>2005</td>
+<td>12381</td>
+<td>&quot;414&quot;</td>
+<td>1058</td>
+<td>895</td>
+<td>4</td>
+<td>61</td>
+<td>2430</td>
+<td>null</td>
+<td>70919</td>
+<td>35660</td>
+<td>208</td>
+<td>4497</td>
+<td>134881</td>
+<td>&quot;Winter&quot;</td>
+</tr>
+<tr class="even">
+<td>&quot;ORD&quot;</td>
+<td>&quot;Chicago, IL: Chicago O&#39;Hare In…</td>
+<td>&quot;January&quot;</td>
+<td>2005</td>
+<td>28194</td>
+<td>&quot;1197&quot;</td>
+<td>2255</td>
+<td>5415</td>
+<td>5</td>
+<td>306</td>
+<td>9178</td>
+<td>88691</td>
+<td>160811</td>
+<td>364382</td>
+<td>151</td>
+<td>24859</td>
+<td>638894</td>
+<td>&quot;Winter&quot;</td>
+</tr>
+<tr class="odd">
+<td>&quot;SAN&quot;</td>
+<td>&quot;San Diego, CA: San Diego Inter…</td>
+<td>&quot;January&quot;</td>
+<td>2005</td>
+<td>7283</td>
+<td>&quot;572&quot;</td>
+<td>680</td>
+<td>638</td>
+<td>7</td>
+<td>56</td>
+<td>1952</td>
+<td>27436</td>
+<td>38445</td>
+<td>21127</td>
+<td>218</td>
+<td>4326</td>
+<td>91552</td>
+<td>&quot;Winter&quot;</td>
+</tr>
+<tr class="even">
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+<tr class="odd">
+<td>&quot;IAD&quot;</td>
+<td>&quot;Washington, DC: Washington Dul…</td>
+<td>&quot;December&quot;</td>
+<td>2015</td>
+<td>2799</td>
+<td>&quot;182&quot;</td>
+<td>183</td>
+<td>61</td>
+<td>0</td>
+<td>17</td>
+<td>443</td>
+<td>null</td>
+<td>15438</td>
+<td>2826</td>
+<td>0</td>
+<td>1825</td>
+<td>31164</td>
+<td>&quot;Fall&quot;</td>
+</tr>
+<tr class="even">
+<td>&quot;ORD&quot;</td>
+<td>&quot;Chicago, IL: Chicago O&#39;Hare In…</td>
+<td>&quot;December&quot;</td>
+<td>2015</td>
+<td>25568</td>
+<td>&quot;923&quot;</td>
+<td>1755</td>
+<td>1364</td>
+<td>11</td>
+<td>180</td>
+<td>4233</td>
+<td>80962</td>
+<td>132055</td>
+<td>72045</td>
+<td>435</td>
+<td>22459</td>
+<td>307956</td>
+<td>&quot;Fall&quot;</td>
+</tr>
+<tr class="odd">
+<td>&quot;SAN&quot;</td>
+<td>&quot;San Diego, CA: San Diego Inter…</td>
+<td>&quot;n/a&quot;</td>
+<td>2015</td>
+<td>6231</td>
+<td>&quot;480&quot;</td>
+<td>606</td>
+<td>256</td>
+<td>5</td>
+<td>37</td>
+<td>1383</td>
+<td>25402</td>
+<td>35796</td>
+<td>9038</td>
+<td>161</td>
+<td>2742</td>
+<td>73139</td>
+<td>&quot;Unknown&quot;</td>
+</tr>
+<tr class="even">
+<td>&quot;SFO&quot;</td>
+<td>&quot;San Francisco, CA: San Francis…</td>
+<td>&quot;December&quot;</td>
+<td>2015</td>
+<td>13833</td>
+<td>&quot;757&quot;</td>
+<td>1180</td>
+<td>2372</td>
+<td>9</td>
+<td>147</td>
+<td>4465</td>
+<td>55283</td>
+<td>96703</td>
+<td>193525</td>
+<td>285</td>
+<td>13788</td>
+<td>359584</td>
+<td>&quot;Fall&quot;</td>
+</tr>
+<tr class="odd">
+<td>&quot;SLC&quot;</td>
+<td>&quot;Salt Lake City, UT: Salt Lake …</td>
+<td>&quot;December&quot;</td>
+<td>2015</td>
+<td>8804</td>
+<td>&quot;483&quot;</td>
+<td>796</td>
+<td>404</td>
+<td>5</td>
+<td>56</td>
+<td>1745</td>
+<td>37354</td>
+<td>49549</td>
+<td>13515</td>
+<td>158</td>
+<td>6693</td>
+<td>107269</td>
+<td>&quot;Fall&quot;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </section>
 <section id="filtration-and-division" class="level2">
 <h2 class="anchored" data-anchor-id="filtration-and-division">Filtration and division</h2>
-<ol type="1">
+<ol start="2" type="1">
 <li><strong>Divide all the columns by 1000 whose name starts with num_of.</strong> Be sure to first filter out rows that contain problematic values for the columns like -999 or 1500+.</li>
 </ol>
-<div id="46dd0566" class="cell" data-execution_count="4">
+<div id="c2404e0e" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> (</span>
@@ -2332,13 +2610,291 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  .<span class="bu">filter</span>(<span class="op">~</span>(pl.all_horizontal(pl.col(<span class="st">&quot;*&quot;</span>).is_null()))) <span class="co">#all horizontal is not in reading but errors kept suggesting i try it so we learned. col&quot;*&quot; selects all</span></span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  .with_columns(pl.col(<span class="st">&quot;num_of_delays_carrier&quot;</span>).cast(pl.Int64))</span>
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  .with_columns(cs.starts_with(<span class="st">&quot;num_of&quot;</span>)<span class="op">/</span><span class="dv">1000</span>)</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+text-align: right;
+white-space: pre-wrap;
+}
+</style>
+<small>shape: (843, 18)</small>
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">airport_code</th>
+<th data-quarto-table-cell-role="th">airport_name</th>
+<th data-quarto-table-cell-role="th">month</th>
+<th data-quarto-table-cell-role="th">year</th>
+<th data-quarto-table-cell-role="th">num_of_flights_total</th>
+<th data-quarto-table-cell-role="th">num_of_delays_carrier</th>
+<th data-quarto-table-cell-role="th">num_of_delays_late_aircraft</th>
+<th data-quarto-table-cell-role="th">num_of_delays_nas</th>
+<th data-quarto-table-cell-role="th">num_of_delays_security</th>
+<th data-quarto-table-cell-role="th">num_of_delays_weather</th>
+<th data-quarto-table-cell-role="th">num_of_delays_total</th>
+<th data-quarto-table-cell-role="th">minutes_delayed_carrier</th>
+<th data-quarto-table-cell-role="th">minutes_delayed_late_aircraft</th>
+<th data-quarto-table-cell-role="th">minutes_delayed_nas</th>
+<th data-quarto-table-cell-role="th">minutes_delayed_security</th>
+<th data-quarto-table-cell-role="th">minutes_delayed_weather</th>
+<th data-quarto-table-cell-role="th">minutes_delayed_total</th>
+<th data-quarto-table-cell-role="th">Season</th>
+</tr>
+<tr class="even">
+<td>str</td>
+<td>str</td>
+<td>str</td>
+<td>i64</td>
+<td>f64</td>
+<td>f64</td>
+<td>f64</td>
+<td>f64</td>
+<td>f64</td>
+<td>f64</td>
+<td>f64</td>
+<td>i64</td>
+<td>i64</td>
+<td>i64</td>
+<td>i64</td>
+<td>i64</td>
+<td>i64</td>
+<td>str</td>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>&quot;DEN&quot;</td>
+<td>&quot;Denver, CO: Denver Internation…</td>
+<td>&quot;January&quot;</td>
+<td>2005</td>
+<td>12.687</td>
+<td>1.041</td>
+<td>0.928</td>
+<td>0.935</td>
+<td>0.011</td>
+<td>0.233</td>
+<td>3.153</td>
+<td>53537</td>
+<td>70301</td>
+<td>36817</td>
+<td>363</td>
+<td>21779</td>
+<td>182797</td>
+<td>&quot;Winter&quot;</td>
+</tr>
+<tr class="even">
+<td>&quot;IAD&quot;</td>
+<td>&quot;&quot;</td>
+<td>&quot;January&quot;</td>
+<td>2005</td>
+<td>12.381</td>
+<td>0.414</td>
+<td>1.058</td>
+<td>0.895</td>
+<td>0.004</td>
+<td>0.061</td>
+<td>2.43</td>
+<td>null</td>
+<td>70919</td>
+<td>35660</td>
+<td>208</td>
+<td>4497</td>
+<td>134881</td>
+<td>&quot;Winter&quot;</td>
+</tr>
+<tr class="odd">
+<td>&quot;ORD&quot;</td>
+<td>&quot;Chicago, IL: Chicago O&#39;Hare In…</td>
+<td>&quot;January&quot;</td>
+<td>2005</td>
+<td>28.194</td>
+<td>1.197</td>
+<td>2.255</td>
+<td>5.415</td>
+<td>0.005</td>
+<td>0.306</td>
+<td>9.178</td>
+<td>88691</td>
+<td>160811</td>
+<td>364382</td>
+<td>151</td>
+<td>24859</td>
+<td>638894</td>
+<td>&quot;Winter&quot;</td>
+</tr>
+<tr class="even">
+<td>&quot;SAN&quot;</td>
+<td>&quot;San Diego, CA: San Diego Inter…</td>
+<td>&quot;January&quot;</td>
+<td>2005</td>
+<td>7.283</td>
+<td>0.572</td>
+<td>0.68</td>
+<td>0.638</td>
+<td>0.007</td>
+<td>0.056</td>
+<td>1.952</td>
+<td>27436</td>
+<td>38445</td>
+<td>21127</td>
+<td>218</td>
+<td>4326</td>
+<td>91552</td>
+<td>&quot;Winter&quot;</td>
+</tr>
+<tr class="odd">
+<td>&quot;SFO&quot;</td>
+<td>&quot;San Francisco, CA: San Francis…</td>
+<td>&quot;January&quot;</td>
+<td>2005</td>
+<td>10.274</td>
+<td>0.798</td>
+<td>0.733</td>
+<td>1.166</td>
+<td>0.007</td>
+<td>0.114</td>
+<td>2.816</td>
+<td>41570</td>
+<td>47705</td>
+<td>60380</td>
+<td>247</td>
+<td>7373</td>
+<td>157275</td>
+<td>&quot;Winter&quot;</td>
+</tr>
+<tr class="even">
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+<tr class="odd">
+<td>&quot;IAD&quot;</td>
+<td>&quot;Washington, DC: Washington Dul…</td>
+<td>&quot;December&quot;</td>
+<td>2015</td>
+<td>2.799</td>
+<td>0.182</td>
+<td>0.183</td>
+<td>0.061</td>
+<td>0.0</td>
+<td>0.017</td>
+<td>0.443</td>
+<td>null</td>
+<td>15438</td>
+<td>2826</td>
+<td>0</td>
+<td>1825</td>
+<td>31164</td>
+<td>&quot;Fall&quot;</td>
+</tr>
+<tr class="even">
+<td>&quot;ORD&quot;</td>
+<td>&quot;Chicago, IL: Chicago O&#39;Hare In…</td>
+<td>&quot;December&quot;</td>
+<td>2015</td>
+<td>25.568</td>
+<td>0.923</td>
+<td>1.755</td>
+<td>1.364</td>
+<td>0.011</td>
+<td>0.18</td>
+<td>4.233</td>
+<td>80962</td>
+<td>132055</td>
+<td>72045</td>
+<td>435</td>
+<td>22459</td>
+<td>307956</td>
+<td>&quot;Fall&quot;</td>
+</tr>
+<tr class="odd">
+<td>&quot;SAN&quot;</td>
+<td>&quot;San Diego, CA: San Diego Inter…</td>
+<td>&quot;n/a&quot;</td>
+<td>2015</td>
+<td>6.231</td>
+<td>0.48</td>
+<td>0.606</td>
+<td>0.256</td>
+<td>0.005</td>
+<td>0.037</td>
+<td>1.383</td>
+<td>25402</td>
+<td>35796</td>
+<td>9038</td>
+<td>161</td>
+<td>2742</td>
+<td>73139</td>
+<td>&quot;Unknown&quot;</td>
+</tr>
+<tr class="even">
+<td>&quot;SFO&quot;</td>
+<td>&quot;San Francisco, CA: San Francis…</td>
+<td>&quot;December&quot;</td>
+<td>2015</td>
+<td>13.833</td>
+<td>0.757</td>
+<td>1.18</td>
+<td>2.372</td>
+<td>0.009</td>
+<td>0.147</td>
+<td>4.465</td>
+<td>55283</td>
+<td>96703</td>
+<td>193525</td>
+<td>285</td>
+<td>13788</td>
+<td>359584</td>
+<td>&quot;Fall&quot;</td>
+</tr>
+<tr class="odd">
+<td>&quot;SLC&quot;</td>
+<td>&quot;Salt Lake City, UT: Salt Lake …</td>
+<td>&quot;December&quot;</td>
+<td>2015</td>
+<td>8.804</td>
+<td>0.483</td>
+<td>0.796</td>
+<td>0.404</td>
+<td>0.005</td>
+<td>0.056</td>
+<td>1.745</td>
+<td>37354</td>
+<td>49549</td>
+<td>13515</td>
+<td>158</td>
+<td>6693</td>
+<td>107269</td>
+<td>&quot;Fall&quot;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </section>
 <section id="correcting-data" class="level2">
 <h2 class="anchored" data-anchor-id="correcting-data">Correcting data</h2>
-<ol type="1">
+<ol start="3" type="1">
 <li><p>According to the BTS website, the “Weather” category only accounts for severe weather delays. Mild weather delays are not counted in the “Weather” category, but are actually included in both the “nas” and “late_aircraft” categories. <strong>Using the columns you modified in the bullet above, your job is to create a new column that calculates the total number of flights (in 1,000’s) delayed by weather (both severe and mild).</strong> Show your work by printing the first 5 rows of the dataset. Use these three rules for your calculations:</p>
 <ol type="a">
 <li>100% of delayed flights in the Weather category are due to weather<br>
@@ -2348,7 +2904,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 <li>From April through August, 40% of delayed flights in the NAS category are due to weather. The rest of the months, the proportion rises to 65%</li>
 </ol></li>
 </ol>
-<div id="39c4d6ef" class="cell" data-execution_count="5">
+<div id="cc5d3797" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> (</span>
@@ -2531,13 +3087,13 @@ white-space: pre-wrap;
 </section>
 <section id="visualizing" class="level2">
 <h2 class="anchored" data-anchor-id="visualizing">Visualizing</h2>
-<ol type="1">
+<ol start="4" type="1">
 <li><strong>Using the new weather variable calculated above, create a boxplot showing the distribution of flights delayed by weather for each season. Describe what you learn from this graph.</strong></li>
 </ol>
 <p><em>As described in the prompts above, a dataset on airports has been wrangled to condense months into specific seasons, and correct discrepancies. As seen in prompt 3, delay due to weather is noticeably higher in the darker months (fall and winter) than the others. Spring can be seen to have the lowest average delay and the lowest extreme delay. This can indicate that the most reliable time to fly may be in the Spring months (April-June).</em></p>
 <p><em>It may be noticed that some of these numbers are in the hundreds of thousands, and it must be addressed that these delays are aggregated among sometimes a hundred plane gates at a time, and aggregated among an entire month. Because of this, it can be calculated that a statistic of 450,000 minutes delay averages out to an 18 minute delay in an average airport and a 9 minute delay in larger airports such as LAX; per plane.</em></p>
 <p><em>Observing numerically, most of the averages are similar, all plus or minus 3,000 minutes of the other. This could indicate that weather may only affect delay in extreme cases. This could further be proven by noting that the original data file only tracked delay in extreme weather.</em></p>
-<div id="5754b0b1" class="cell" data-execution_count="6">
+<div id="10f86be2" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>aplot <span class="op">=</span> (</span>
@@ -2560,7 +3116,7 @@ white-space: pre-wrap;
 //# sourceMappingURL=lets-plot.js.map</script>
    
    
-          <div id="kYT0Ju"></div>
+          <div id="LteWtE"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -2585,7 +3141,7 @@ white-space: pre-wrap;
        };
    }
    
-   const containerDiv = document.getElementById("kYT0Ju");
+   const containerDiv = document.getElementById("LteWtE");
    let fig = null;
    
    function renderPlot() {
