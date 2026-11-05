@@ -56,7 +56,7 @@ _After analyzing the database on Denver, Colorado homes, four metrics outstandin
 _The first two metrics are likely caused by general building trends. Modern homes are built using models rather than individually architected and most often seem to have multiple stories. When houses have multiple stories, they nearly always have a garage on the first floor. Old homes also always seem to have either no garage or the owner has built a garage outside. The second metric is that these old homes have received a C grade. This could indicaate the homes have been used well. After research, it also could indicate that it has not been graded for over a year, which further increases the likelyhood of it being an older house. These three metrics will be used in the training data._
 
 ```{python}
-possible = ["arcstyle_ONE-STORY","gartype_Att","quality_C","finbsmnt"]
+possible = ["arcstyle_ONE-STORY","gartype_Att","quality_C","livearea","finbsmnt","numbaths","numbdrm"]
 myAgg = (
   df.select(possible + ["before1980"])
   .group_by("before1980")
@@ -66,9 +66,10 @@ myAgg = (
     (pl.col("arcstyle_ONE-STORY")*177.62).cast(pl.Int8).alias("One story"),
     (pl.col("gartype_Att")*165.75).cast(pl.Int8).alias("Attached garage"),
     (pl.col("quality_C")*123.41).cast(pl.Int8).alias("Quality grade C"),
-    (pl.col("finbsmnt")/3.48).cast(pl.Int8).alias("Finished basement"),
+    (pl.col("livearea")/18.78).cast(pl.Int8).alias("Square footage"),
+    (pl.col("finbsmnt")/3.48).cast(pl.Int8).alias("Finished basement")
   )
-  .unpivot(index="Built before 1980", on=["One story","Attached garage","Quality grade C","Finished basement"], variable_name="Metric", value_name="Percentage")
+  .unpivot(index="Built before 1980", on=["One story","Attached garage","Quality grade C","Square footage","Finished basement"], variable_name="Metric", value_name="Percentage")
 )
 (
   ggplot(myAgg,aes(x="Metric",y="Percentage",fill="Built before 1980"))
@@ -80,21 +81,24 @@ myAgg = (
 ).show()
 ```
 
-2. __Build a classification model labeling houses as being built “before 1980” or “during or after 1980”.__ Your goal is to reach or exceed 90% accuracy. Report your final model choice and any other model parameters you may have tweaked (train-test split ratio, tuning parameters, etc).  
 
-_type your write-up and analysis here_
+## Building the model
+
+2. __Build a classification model labeling houses as being built “before 1980” or “during or after 1980”.__ Your goal is to reach or exceed 91% accuracy. Report your final model choice and any other model parameters you may have tweaked (train-test split ratio, tuning parameters, etc).  
+
+_The model chosen to classify whether a home was RandomForest, as it was seen to be the most extensive for this situation. The test to training ratio was 11:1 meaning there was 11 times more training than data was tested on, however, that still left over 2,000 individual homes' data to compare to. The highest accuracy which could be achieved through only the metrics of stories, garage, and quality could achieve was 87%, so a few more metrics were added to help train the data. After adding the metrics of square footage, finish basements, and number of bathrooms, an accourace of 91% has been achieved To avoid overfitting, which is when an algorithm no longer recognizes patterns due to being too exact, the max classification depth has been limited to 15 iterations._
 
 ```{python}
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 
 X_train, X_test, y_train, y_test = train_test_split(
-  df.select(["arcstyle_ONE-STORY","gartype_Att","quality_C"]),
+  df.select(["arcstyle_ONE-STORY","gartype_Att","quality_C","livearea","finbsmnt","numbaths"]),
   df["before1980"],
-  test_size=0.2,
-  random_state=6352
+  test_size=0.09,
+  random_state=0
 )
-model = DecisionTreeClassifier(max_depth=3, random_state=42)
+model = RandomForestClassifier(max_depth=15,random_state=0)
 model.fit(X_train, y_train)
 predict = model.predict(X_test)
 print(f"Accuracy: {(accuracy_score(y_test,predict)):.4f}")
