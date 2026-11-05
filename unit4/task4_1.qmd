@@ -98,7 +98,7 @@ X_train, X_test, y_train, y_test = train_test_split(
   test_size=0.09,
   random_state=0
 )
-model = RandomForestClassifier(max_depth=15,random_state=0)
+model = RandomForestClassifier(n_estimators=100,max_depth=15,random_state=0)
 model.fit(X_train, y_train)
 predict = model.predict(X_test)
 print(f"Accuracy: {(accuracy_score(y_test,predict)):.4f}")
