@@ -1,0 +1,169 @@
+---
+title: "Client Report -How good is it, really?"
+subtitle: "Unit 4 Task 2"
+author: "John Wendt"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+    
+---
+
+```{python}
+import polars as pl
+import numpy as np
+from lets_plot import *
+from sklearn.model_selection import train_test_split
+from sklearn import metrics
+from sklearn.ensemble import RandomForestClassifier
+# add the additional libraries you need to import for ML here
+
+LetsPlot.setup_html(isolated_frame=True)
+```
+
+
+```{python}
+df = pl.read_csv("dwellings_ml.csv")
+X_train, X_test, y_train, y_test = train_test_split(
+  df.select(["arcstyle_ONE-STORY","gartype_Att","quality_C","livearea","finbsmnt","numbaths"]),
+  df["before1980"],
+  test_size=0.09,
+  random_state=0
+)
+model = RandomForestClassifier(n_estimators=100,max_depth=15,random_state=0)
+model.fit(X_train, y_train)
+predict = model.predict(X_test)
+```
+
+## Quality evaluated
+
+1. __Describe the quality of your classification model using 2-3 different evaluation metrics.__ You also need to explain how to define/interpret each of the evaluation metrics you use.  
+
+_Seen below is two values and a multicolored table. What does it all mean? Recall unit 4's task 1, where a machine learning model was tasked with classifying whether a specific home was built before or after 1980. This was based on a few classifers such as having an attached garage or only a single story home._
+_A recall value is the fraction value of homes built before 1980 in which the machine learning model could accurately detect. The higher the recall value, the more likely a machine learning model is to be accurte, and a value of 92.68% is accurate. A precision value is the fraction value of homes in which the model predicted to be built before 1980 vs the total homes before 1980. The higher the precision value, the more likely a machine learning model is to be accurate, and a value of 93.74% is quite accurate._
+_The table below is a more in-depth look into the model's accuracy. The green square, with a value of 656 is how many homes the model correctly predicted were built after 1980. The yellow square, with a value of 1228 is how many homes the model correctly predicted were built before 1980. The two purple squares are incorrect predictions. However, the accurate predictions are much higher than the inaccurate predictions, further establishes the credibility of this model._
+
+```{python}
+from sklearn.metrics import recall_score, precision_score,confusion_matrix, ConfusionMatrixDisplay
+
+recall = recall_score(y_test,predict)
+precision = precision_score(y_test,predict)
+print(f"Recall value: {(recall*100):.2f}%\tPrecision value: {(precision*100):.2f}%")
+confusion = confusion_matrix(y_test,predict)
+ConfusionMatrixDisplay(confusion_matrix=confusion,display_labels=['After 1980','Before 1980']).plot(
+  colorbar=False
+)
+```
+
+
+## Features evaluated
+
+1. __Justify your classification model by discussing the most important features selected by your model.__ This discussion should include a plot of permutation importance values for the most important features. Were there any features you thought would be importance but weren't?
+
+_The table below is a visualization of how "important" each metric is to the model. This importance is measured by removing any one specific metric from the model and calculating how much less (or sometimes more) accurate the model is at predicting. As seen in the table below, all of the features are of similar importance, and all of them add more accuracty to the model. It may be noted that the number of bathrooms and whether a home has only one story are of the most importance. This varies from what was calculated in the previous task, and may prove sufficient if the model were to be created again. However, again, all six features which were used were shown to be useful towards the model, as shown by their positive value of importance._
+
+```{python}
+from sklearn.inspection import permutation_importance
+import warnings
+warnings.filterwarnings('ignore', category=UserWarning)
+
+result = permutation_importance(
+  estimator=model,
+  X=X_test,
+  y=y_test,
+  random_state=0
+)
+importance = pl.DataFrame({
+  "Feature": X_test.columns,
+  "Importance": result.importances_mean
+}).sort("Importance", descending=True)
+importance = importance.with_columns(
+  pl.col("Feature").replace(
+    {"finbsmnt":"Finished basement",
+    "quality_C":"Quality grade C",
+    "gartype_Att":"Attached garage",
+    "livearea":"Square footage",
+    "numbaths":"Number of bathrooms",
+    "arcstyle_ONE-STORY":"Only one story"}
+  )
+)
+aplot = (
+  ggplot(importance, aes(x="Feature",y="Importance"))
+  +geom_bar(stat="identity")
+  +labs(
+    title="Change if the model didn't have:",
+    x="Average Decrease in accuracy"
+  )
+  +theme(axis_text_x=element_text(angle=35,hjust=1))
+)
+aplot
+```
+
+## How does it affect?
+
+1. __For the 3 most important features, explain their relationship to the target variable. Use a plot to illustrate the relationship.__ (3 plots minimum)
+
+_Below are three plots of the features in which evaluations deemed to be the most important toward training the machine learning model. It may be noticed that each graph has a marker at the year 1980._
+_Looking at each graph individually:_
+_The first graph is the percentage of homes built with only a single story. It may be noticed that there is a significant difference between homes built before and after 1980 on this graph, however error may occur between 1960 and 1980 for this feature._
+_The second graph is the average amount of bathrooms in any given home. Aside from the outlier in 1879, pre-1980s homes typically contained around 2 bathrooms. However, after 1980 that jumped to just under 3 bathrooms per home._
+_The third graph is how much living space the home had, in square foot. Aside from the outlier in 1879, pre-1980s homes typically had around 1,250 square feet of living area. After 1990, that jumped to around 1,850 square feet of living area. However, error may occur between 1980 and 1990 for this feature._
+_The single errors of each feature is what argues the necessity for multiple features handed to a machine learning model. In this case, the three and more features fed into the model were all very useful in determining whether a home was built before or after 1980._
+
+```{python}
+adf = (
+  df.select("yrbuilt","arcstyle_ONE-STORY","numbaths","livearea")
+  .group_by("yrbuilt")
+  .agg(
+    (pl.col("arcstyle_ONE-STORY").sum()/pl.col("arcstyle_ONE-STORY").count())*100,
+    pl.col("numbaths").mean(),
+    pl.col("livearea").mean()
+  )
+)
+(ggplot(adf,aes(x="yrbuilt",y="arcstyle_ONE-STORY"))
+  +geom_line(stat="identity")
+  +geom_vline(xintercept=1980,color="red")
+  +scale_x_continuous(format="d")
+  +labs(
+    title="One story homes built per year",
+    x="Year",
+    y="Count of single-story homes"
+  )
+).show()
+(ggplot(adf,aes(x="yrbuilt",y="numbaths"))
+  +geom_line(stat="identity")
+  +geom_vline(xintercept=1980,color="red")
+  +scale_x_continuous(format="d")
+  +labs(
+    title="Average bathrooms in homes built per year",
+    x="Year",
+    y="Average bathroom count"
+  )
+).show()
+(ggplot(adf,aes(x="yrbuilt",y="livearea"))
+  +geom_line(stat="identity")
+  +geom_vline(xintercept=1980,color="red")
+  +scale_x_continuous(format="d")
+  +labs(
+    title="Average home's square footage per year",
+    x="Year",
+    y="Square footage"
+  )
+).show()
+```
