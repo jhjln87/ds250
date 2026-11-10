@@ -1,0 +1,150 @@
+---
+title: "Client Report - Show me!"
+subtitle: "Unit 4 Task 3"
+author: "John Wendt"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+    
+---
+
+```{python}
+import polars as pl
+import numpy as np
+from lets_plot import *
+from sklearn.model_selection import train_test_split
+from sklearn import metrics
+# add the additional libraries you need to import for ML here
+
+LetsPlot.setup_html(isolated_frame=True)
+```
+
+
+```{python}
+from sklearn.ensemble import RandomForestClassifier
+df = pl.read_csv("dwellings_ml.csv")
+X_train, X_test, y_train, y_test = train_test_split(
+  df.select(["arcstyle_ONE-STORY","gartype_Att","quality_C","livearea","finbsmnt","numbaths"]),
+  df["before1980"],
+  test_size=0.09,
+  random_state=0
+)
+model = RandomForestClassifier(n_estimators=100,max_depth=15,random_state=0)
+model.fit(X_train, y_train)
+predict = model.predict(X_test)
+```
+
+## Comparing Models
+
+1. __Repeat the classification exercise using 2 different algorithms/models. Explain the differences between the 3 models__ (your original one, and the 2 new ones for this task).
+
+_Below is the comparison between not 3, but 4 different popular classification models. In order to compare fairly, similar parameters were passed through all models. As seen below, random forest classification is the most accurate for classifying if a home was built before 1980 or not. However, 15 "if/thens" (max-depth) were allowed for the random forest, which could cause overfitting, skewing the possible future accuracy of the random forest model. After that, the gradient boosting and XGBoost models were close contenders._
+
+```{python}
+import xgboost as xgb
+from sklearn.naive_bayes import GaussianNB
+from sklearn.datasets import load_iris
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.metrics import accuracy_score
+
+modelXgb = xgb.XGBClassifier(n_estimators=100,learning_rate=0.1,max_depth=15,random_state=0)
+modelXgb.fit(X_train, y_train)
+predictXgb = modelXgb.predict(X_test)
+
+modelNB = GaussianNB()
+modelNB.fit(X_train, y_train)
+predictNB = modelNB.predict(X_test)
+
+modelGrad = GradientBoostingClassifier(n_estimators=100,learning_rate=0.1,max_depth=15,random_state=0)
+modelGrad.fit(X_train, y_train)
+predictGrad = modelGrad.predict(X_test)
+
+df = pl.DataFrame({
+  "Models": ["Random Forest","XGBoost","Naive Bayes","Gradient Boosting"],
+  "Accuracy":[accuracy_score(y_test,predict),accuracy_score(y_test,predictXgb),accuracy_score(y_test,predictNB),accuracy_score(y_test,predictGrad)]
+})
+df = (
+  df.sort(by=["Accuracy"],descending=True)
+)
+df
+```
+
+
+## Further evaluation
+
+1. For each model (your original one, and the 2 new ones for this task), display the classification report and the permutation importances for the most important features.  Discuss which model you would recommend to the Client and why.
+
+_Below is a lot of information. Analyzing and breaking it down:_
+_The unformatted tables are encoded functions to calculate precision, recall, and a few other metrics for each model. See precision and recall explanations in the unit 4 task 3 report. The F1 score is the average between precision and recall. The support is the total count of data points that fall in the "0" or "1" classification of "Before 1980" or the total count of data points. Macro average is just the plain average of the two points "0" or "1" representing true or false for "Before 1980". The weighted average takes into actual value of precision, recall, f1-score when calculating. If the macro and weighted average are exact, the data set is balanced, which is another sign of an accurate model._
+_Looking at the formatted bar graphs tells a different story. There are separate graphs for each different model, each sorted by "how important" each feature was for the specific model._
+
+_Now, actually analyzing the data:_
+_It can be seen that the overall metrics of precision, recall, f1-score, and averages all agree with the accuracy. That is, all those metrics follow a similar path being that random forest is the most effective model, then gradient boosting, then XGBoost, etc._
+_It can be seen that the best feature for all models are if the home has only one story. This agrees with our findings in unit 4 task 1. Then seen that the next most important feature is the number of bathrooms in the home, which is not originally considered until further tweaking of the original model. It may also be noted that the least effective model for this data, the naive bayes model, views the least importance for nearly all the features, including nearly zero for two of the features._
+
+```{python}
+from sklearn.metrics import classification_report
+from sklearn.inspection import permutation_importance
+import warnings
+warnings.filterwarnings('ignore', category=UserWarning)
+
+for name, m in ({
+    "Random Forest": predict,
+    "Gradient Boosting": predictGrad,
+    "XGBoost": predictXgb,
+    "Naive Bayes": predictNB
+}).items():
+  print(f"Classification report for {name}\n{classification_report(y_test,m)}\n\n")
+
+for name, m in ({
+    "Random Forest": model,
+    "Gradient Boosting": modelGrad,
+    "XGBoost": modelXgb,
+    "Naive Bayes": modelNB
+}).items():
+  r = permutation_importance(
+    m, X_test, y_test, n_repeats=10, random_state=0
+  )
+  importance = pl.DataFrame({
+    "Feature": X_train.columns,
+    "Importance": r.importances_mean
+  })
+  importance = (
+    importance.sort("Importance",descending=True)
+    .with_columns(
+      pl.col("Feature").replace({
+        "finbsmnt":"Finished basement",
+        "quality_C":"Quality grade C",
+        "gartype_Att":"Attached garage",
+        "livearea":"Square footage",
+        "numbaths":"Number of bathrooms",
+        "arcstyle_ONE-STORY":"Only one story"
+      })
+    )
+  )
+  (
+    ggplot(importance,aes(x="Feature", y="Importance"))
+    +geom_bar(stat="identity")
+    +labs(
+      title=name+" model"
+    )
+    +theme(axis_text_x=element_text(angle=35,hjust=1))
+  ).show()
+```
