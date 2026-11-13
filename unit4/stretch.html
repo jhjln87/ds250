@@ -2253,7 +2253,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 
 
 
-<div id="d46bf86c" class="cell" data-execution_count="1">
+<div id="b90e8d25" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
@@ -2272,7 +2272,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 <li><strong>Join the dwellings_neighborhoods_ml.csv data to the dwelling_ml.csv on the parcel column to create a new dataset. Duplicate the code for the model you recommended in the previous taskn above and update it to use this data. Explain the differences and if this changes the model you recomend to the Client.</strong></li>
 </ol>
 <p><em>In efforts to keep the model as similar as the original model, the only changes made to this new model was the data, and later the features. When performing the exact same machine learning model (Random Forest) the accuracy actually fell by 0.8%. However, after including all the features from dwellings_neighborhoods the accuracy rose by 1.1%. The charts below show a plethora of metrics but the most important may be the accuracy, precision, and recall. Notice how when we join the dataframes the metrics drop by a tiny amount, but after adding all of the features from dwellings_neighborhoods it jumps a bit higher than the original.</em> <em>It would not be recommended to change models, as the metrics have not fallen very far, but in fact improved a bit. Recall Unit 4’s task 3. It was found that Random Forest was the most effective model for the original data set. Seeing the improvements new features add, Random Forest is likely still the best model for this addition.</em></p>
-<div id="e1500f26" class="cell" data-execution_count="2">
+<div id="e90918f5" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#this code is so bad i am sorry</span></span>
@@ -2343,8 +2343,8 @@ weighted avg       0.92      0.92      0.92      2517
 <ol type="1">
 <li><strong>Can you build a model that predicts the year a house was built? Note this is a regression ML model, not a classifier. Report appropriate evaluation metrics for the model. Explain the model and the evaluation metrics you used to determine if the model is good.</strong></li>
 </ol>
-<p><em>The model chosen was the regression version of the XGBoost model from unit 4 task 3. Time was taken to optimize the model for best performance through passing many features into the model, and much tweaking of model parameters. Below may be seen the metrics for the model, including the average error, meaning the model was typically off by a little under 7.5 years. This is quite a good error margin as the database includes homes over nearly a 200 year period. Below is also seen the R2 score, a score of 1 means the model guessed each year perfectly and a score of 0 means the model guessed every year incorrectly. However, a score of perfect 1 also may be a sign of overfitting, tailoring the model for this dataset but possibly failing at any additional data points. The score of 0.86 indicates the features given are a strong fit for the model.</em> <em>Also below is a chart, for visualization purpose. The chart selected 25 data points at random and compared the predicted year vs. the actual year built. As seen, a majority of the predictions are within less than 5 years, further indicating model accuracy. However, there are multiple outliers of up to 100 years. This could indicate either model inaccuracy and further tweaking needed, or that the data base did not have sufficient information to handle outliers.</em></p>
-<div id="2f8b89db" class="cell" data-execution_count="3">
+<p><em>The model chosen was the regression version of the XGBoost model from unit 4 task 3. Time was taken to optimize the model for best performance through passing many features into the model, and much tweaking of model parameters. Below may be seen the metrics for the model, including the average error, meaning the model was typically off by a little under 7.5 years. This is quite a good error margin as the database includes homes over nearly a 200 year period. Below is also seen the R2 score, a score of 1 means the model guessed each year perfectly and a score of 0 means the model guessed every year incorrectly. However, a score of perfect 1 also may be a sign of overfitting, tailoring the model for this dataset but possibly failing at any additional data points. The score of 0.86 indicates the features given are a strong fit for the model.</em> <em>Also below is a chart, for visualization purpose. The chart selected 25 data points at random and compared the predicted year vs. the actual year built. As seen, a majority of the predictions are within less than 5 years, further indicating model accuracy. However, there may be a few outliers of up to 100 years. This could indicate either model inaccuracy and further tweaking needed, or that the data base did not have sufficient information to handle outliers.</em></p>
+<div id="a359eed1" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> xgboost <span class="im">import</span> XGBRegressor</span>
@@ -2419,7 +2419,7 @@ R2 score: 0.8645</code></pre>
 //# sourceMappingURL=lets-plot.js.map</script>
    
    
-          <div id="VrxwCv"></div>
+          <div id="jP0YRX"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -2444,7 +2444,7 @@ R2 score: 0.8645</code></pre>
        };
    }
    
-   const containerDiv = document.getElementById("VrxwCv");
+   const containerDiv = document.getElementById("jP0YRX");
    let fig = null;
    
    function renderPlot() {
@@ -2476,8 +2476,8 @@ R2 score: 0.8645</code></pre>
 "geom":"segment",
 "data":{
 "Home":[1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,11.0,12.0,13.0,14.0,15.0,16.0,17.0,18.0,19.0,20.0,21.0,22.0,23.0,24.0,25.0],
-"Actual":[1964.0,1969.0,2008.0,1890.0,1907.0,1940.0,2000.0,2010.0,1947.0,1952.0,1936.0,1948.0,1988.0,1954.0,2002.0,1895.0,2011.0,2011.0,1938.0,2008.0,1958.0,1904.0,2011.0,1912.0,1890.0],
-"Predicted":[1958.0999755859375,1968.5999755859375,2019.9000244140625,1886.9000244140625,1907.5,1934.800048828125,2002.0999755859375,2009.199951171875,1946.9000244140625,1964.800048828125,1946.9000244140625,1932.800048828125,1999.0,1949.0999755859375,1999.5999755859375,1893.300048828125,1993.300048828125,2006.5,1938.0,2010.300048828125,1952.4000244140625,1927.9000244140625,2010.199951171875,1901.800048828125,1921.0]
+"Actual":[1968.0,2001.0,1978.0,1925.0,2003.0,1952.0,2011.0,1980.0,1952.0,1978.0,1978.0,1952.0,1947.0,2011.0,1897.0,1901.0,1982.0,2009.0,1949.0,2005.0,1905.0,1891.0,1912.0,1921.0,2012.0],
+"Predicted":[1969.800048828125,2003.4000244140625,1979.0,1932.300048828125,2006.0999755859375,1963.800048828125,2011.300048828125,1976.5,1939.0,1973.0999755859375,1975.9000244140625,1950.300048828125,1937.699951171875,2010.4000244140625,1902.300048828125,1898.699951171875,1979.0999755859375,2007.300048828125,1950.0999755859375,1981.0,1908.0,1914.9000244140625,1912.199951171875,1943.5,2010.0]
 },
 "mapping":{
 "x":"Home",
@@ -2504,7 +2504,7 @@ R2 score: 0.8645</code></pre>
 "data":{
 "Home":[1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,11.0,12.0,13.0,14.0,15.0,16.0,17.0,18.0,19.0,20.0,21.0,22.0,23.0,24.0,25.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,11.0,12.0,13.0,14.0,15.0,16.0,17.0,18.0,19.0,20.0,21.0,22.0,23.0,24.0,25.0],
 "Type":["Actual","Actual","Actual","Actual","Actual","Actual","Actual","Actual","Actual","Actual","Actual","Actual","Actual","Actual","Actual","Actual","Actual","Actual","Actual","Actual","Actual","Actual","Actual","Actual","Actual","Predicted","Predicted","Predicted","Predicted","Predicted","Predicted","Predicted","Predicted","Predicted","Predicted","Predicted","Predicted","Predicted","Predicted","Predicted","Predicted","Predicted","Predicted","Predicted","Predicted","Predicted","Predicted","Predicted","Predicted","Predicted"],
-"Year":[1964.0,1969.0,2008.0,1890.0,1907.0,1940.0,2000.0,2010.0,1947.0,1952.0,1936.0,1948.0,1988.0,1954.0,2002.0,1895.0,2011.0,2011.0,1938.0,2008.0,1958.0,1904.0,2011.0,1912.0,1890.0,1958.0999755859375,1968.5999755859375,2019.9000244140625,1886.9000244140625,1907.5,1934.800048828125,2002.0999755859375,2009.199951171875,1946.9000244140625,1964.800048828125,1946.9000244140625,1932.800048828125,1999.0,1949.0999755859375,1999.5999755859375,1893.300048828125,1993.300048828125,2006.5,1938.0,2010.300048828125,1952.4000244140625,1927.9000244140625,2010.199951171875,1901.800048828125,1921.0]
+"Year":[1968.0,2001.0,1978.0,1925.0,2003.0,1952.0,2011.0,1980.0,1952.0,1978.0,1978.0,1952.0,1947.0,2011.0,1897.0,1901.0,1982.0,2009.0,1949.0,2005.0,1905.0,1891.0,1912.0,1921.0,2012.0,1969.800048828125,2003.4000244140625,1979.0,1932.300048828125,2006.0999755859375,1963.800048828125,2011.300048828125,1976.5,1939.0,1973.0999755859375,1975.9000244140625,1950.300048828125,1937.699951171875,2010.4000244140625,1902.300048828125,1898.699951171875,1979.0999755859375,2007.300048828125,1950.0999755859375,1981.0,1908.0,1914.9000244140625,1912.199951171875,1943.5,2010.0]
 },
 "mapping":{
 "x":"Home",
