@@ -123,19 +123,20 @@ _AI use reflection_
 **The Impact**  How did using AI impact your learning?
 
 ```{python}
+regexmap = [r'(?i)([A-Z]+)',r'[\._0-9](?i)([A-Z]+)',r'@(?i)([A-Z]+)']
 adf = (
   df.with_columns(
-    (pl.col("email").str.extract(r'@(?i)([A-Z]+)').str.to_lowercase()).alias("domain")
+    (pl.col("email").str.extract(regexmap[2]).str.to_lowercase()).alias("domain")
   )
   .with_columns(
     pl.when(pl.col("domain")=="gmail")
-    .then(pl.col("email").str.extract(r'(?i)([A-Z]+)'))
-    .otherwise(pl.col("email").str.extract(r'[_0-9](?i)([A-Z]+)'))
+    .then(pl.col("email").str.extract(regexmap[0]))
+    .otherwise(pl.col("email").str.extract(regexmap[1]))
     .alias("first"),
 
     pl.when(pl.col("domain") == "gmail")
-    .then(pl.col("email").str.extract(r'[.](?i)([A-Z]+)'))
-    .otherwise(pl.col("email").str.extract(r'(?i)([A-Z]+)'))
+    .then(pl.col("email").str.extract(regexmap[1]))
+    .otherwise(pl.col("email").str.extract(regexmap[0]))
     .alias("last")
   )
 ).select("email","first","last","domain")
@@ -144,8 +145,23 @@ bdf = (
   .agg(pl.len().alias("count"))
   .sort(by=["count"],descending=True)
 )
-adf.head().show()
-bdf.head().show()
+# adf.head().show()
+# bdf.head().show()
+
+yesnomap = {None:0,"No":0,"Yes":1}
+favorabilitymap = {None:0,"Unfamiliar (N/A)":0,"Very unfavorably":1,"Somewhat unfavorably":2,"Neither favorably nor unfavorably (neutral)":3,"Somewhat favorably":4,"Very favorably":5}
+cdf = (
+  df.filter(pl.any_horizontal(cs.starts_with("seen_Episode_").is_not_null()))
+  .with_columns(
+    pl.col("star_wars_fan","know_expanded_universe","expanded_universe_fan","star_trek_fan").replace(yesnomap).cast(pl.Int8),
+    cs.starts_with("seen_Episode").is_not_null().cast(pl.Int8),
+    pl.col("fav_Han_Solo","fav_Luke_Skywalker","fav_Princess_Leia_Organa","fav_Anakin_Skywalker","fav_Obi_Wan_Kenobi","fav_Emperor_Palpatine","fav_Darth_Vader","fav_Lando_Calrissian","fav_Boba_Fett","fav_C-3P0","fav_R2_D2","fav_Jar_Jar_Binks","fav_Padme_Amidala","fav_Yoda").replace(favorabilitymap).cast(pl.Int8)
+  )
+  
+  .drop("seen_any")
+)
+df.show()
+cdf.show()
 ```
 
 ## Results
