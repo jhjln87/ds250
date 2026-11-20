@@ -148,14 +148,26 @@ bdf = (
 # adf.head().show()
 # bdf.head().show()
 
+#i am so sorry for the wall below this
 yesnomap = {None:0,"No":0,"Yes":1}
 favorabilitymap = {None:0,"Unfamiliar (N/A)":0,"Very unfavorably":1,"Somewhat unfavorably":2,"Neither favorably nor unfavorably (neutral)":3,"Somewhat favorably":4,"Very favorably":5}
+hanshotfirst = {None:0,"I don't understand this question":0,"Greedo":1,"Han":2}
+gendermap = {"Male":0,"Female":1}
+edumap = {None:0,"Less than high school degree":1,"High school degree":2,"Some college or Associate degree":3,"Bachelor degree":4,"Graduate degree":5}
+locmap = {None:0,"East South Central":1,"New England":2,"Mountain":3,"West North Central":4,"West South Central":5,"Middle Atlantic":6,"South Atlantic":7,"Pacific":8,"East North Central":9}
 cdf = (
   df.filter(pl.any_horizontal(cs.starts_with("seen_Episode_").is_not_null()))
   .with_columns(
     pl.col("star_wars_fan","know_expanded_universe","expanded_universe_fan","star_trek_fan").replace(yesnomap).cast(pl.Int8),
     cs.starts_with("seen_Episode").is_not_null().cast(pl.Int8),
-    pl.col("fav_Han_Solo","fav_Luke_Skywalker","fav_Princess_Leia_Organa","fav_Anakin_Skywalker","fav_Obi_Wan_Kenobi","fav_Emperor_Palpatine","fav_Darth_Vader","fav_Lando_Calrissian","fav_Boba_Fett","fav_C-3P0","fav_R2_D2","fav_Jar_Jar_Binks","fav_Padme_Amidala","fav_Yoda").replace(favorabilitymap).cast(pl.Int8)
+    cs.starts_with("rank_Episode").cast(pl.Int8),
+    pl.col("fav_Han_Solo","fav_Luke_Skywalker","fav_Princess_Leia_Organa","fav_Anakin_Skywalker","fav_Obi_Wan_Kenobi","fav_Emperor_Palpatine","fav_Darth_Vader","fav_Lando_Calrissian","fav_Boba_Fett","fav_C-3P0","fav_R2_D2","fav_Jar_Jar_Binks","fav_Padme_Amidala","fav_Yoda").replace(favorabilitymap).cast(pl.Int8),
+    pl.col("who_shot_first").replace(hanshotfirst).cast(pl.Int8),
+    pl.col("gender").replace(gendermap).cast(pl.Int8),
+    pl.col("age").str.extract_all(r"\d+").cast(pl.List(pl.Float64)).list.mean().cast(pl.Float16),
+    pl.col("household_income").fill_null(0).str.replace_all(",","").str.extract_all(r"\d+").cast(pl.List(pl.Float64)).list.mean().round().cast(pl.Int32),
+    pl.col("education").replace(edumap).cast(pl.Int8),
+    pl.col("location").replace(locmap).cast(pl.Int8)
   )
   
   .drop("seen_any")
