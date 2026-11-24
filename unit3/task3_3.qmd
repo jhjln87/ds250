@@ -48,7 +48,7 @@ con = sqlite3.connect(sqlite_file)
 
 __Write an SQL query that pulls in the the salaries table and the collegeplaying table (and any other tables you might need) and store them in polars dataframes. In Python Polars, combine the dataframes to create a list of baseball players who attended BYU-Idaho. The new table should contain five columns: playerID, schoolID, salary, yearID and teamID associated with each salary.__
 
-_The below table lists all data on baseball players who attended Brigham Young University-Idaho. It may be noted that only two players are visible, and when sorting by unique players, only these two show. This indicates that only two players originated from BYU-I. However, it must also be noted that one of these players began their career in 1991, which means they actually originated from Ricks College, and the second player began their career in 2001, immediately after the college was renamed to BYU-I. It must also be noted that each of these players are only recorded in this database for up to two years each. This could indicate that the average baseball career is not very long. Also noted is that each players salary steadily increased year by year._
+_The below table lists all data on baseball players who attended Brigham Young University-Idaho. It may be noted that only two players are visible, and when sorting by unique players, only these two show. This indicates that only two players originated from BYU-I. However, it must also be noted that one of these players began their career in 1997, which means they actually originated from Ricks College, and the second player began their career in 2007, after the college was renamed to BYU-I. It can be noted that each player's salary steadily increased year by year._
 
 ```{python}
 query1 = """
@@ -61,16 +61,15 @@ FROM collegeplaying
 """
 adf = pl.read_database(query1, con)
 bdf = pl.read_database(query2, con)
-df = adf.join(
-  bdf,
-  on="playerID",
-  how="inner"
+byui = (
+  bdf.filter(pl.col("schoolID").str.contains("byuid"))
+  .select("playerID","schoolID")
+  .unique()
 )
 df = (
-  df.filter(pl.col("schoolID").str.contains("byuid"))
-  .select("playerID","schoolID","salary",pl.col("yearID_right").alias("yearID"),"teamID")
-  .sort(by=["yearID","salary"])
-  # .unique(subset="playerID")
+  adf.join(byui,on="playerID",how="inner")
+  .select("playerID","schoolID","salary","yearID","teamID")
+  .sort(by=["playerID","yearID"])
 )
 df
 ```

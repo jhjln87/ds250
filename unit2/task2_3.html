@@ -2261,7 +2261,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
   <li><a href="#aggregate-monthly-delays" id="toc-aggregate-monthly-delays">Aggregate monthly delays</a></li>
   </ul>
 </nav>
-<div id="96663a9e" class="cell" data-execution_count="1">
+<div id="f3404f41" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
@@ -2274,7 +2274,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>LetsPlot.setup_html(isolated_frame<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<div id="27ca25e6" class="cell" data-execution_count="2">
+<div id="23dc10be" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">&quot;https://raw.githubusercontent.com/byuidatascience/data4missing/master/data-raw/flights_missing/flights_missing.json&quot;</span></span>
@@ -2287,19 +2287,24 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 <ol type="1">
 <li><strong>Convert values to missing</strong> Start with a fresh copy of the flights dataset by reading it in from the link provided above (as opposed to starting with the dataset you ended with in the last assignment). Identify data values that are problematic, non-sense or impossible and change them to be missing. In your report include one record example (one row) from your clean data, in the raw JSON format. Your example should display at least one missing value so that we can verify it was done correctly. (Note: JSON will convert NaN’s to null). Describe your process for finding values that needed to be changed, and how you changed them.</li>
 </ol>
-<p><em>The first thing done for this process was to ensure all non-values were set to</em> null <em>. Values such as -999 and n/a were replaced with </em> null <em>, while 1500+ was kept as it represents more than 1500 rather than a non-value. Then, all values were filtered so that only rows with a null value remained. Seen below is the very first line of this filtered dataset, in raw JSON format. See that there is a </em> null <em>in the num_of_delays_late_aircraft value.</em></p>
-<div id="6378a317" class="cell" data-execution_count="3">
+<p><em>The first thing done for this process was to ensure all non-values were set to</em> null <em>. Values such as -999, 1500+ and n/a were replaced with</em> null <em>. Then, all values were filtered so that only rows with a null value remained. Seen below is the very first line of this filtered dataset, in raw JSON format. See that there is a </em> null <em>in the num_of_delays_carrier and num_of_delays_late_aircraft values.</em></p>
+<div id="6e402de7" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>adf <span class="op">=</span> (</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  df.with_columns(cs.starts_with(<span class="st">&quot;num_of&quot;</span>,<span class="st">&quot;minutes&quot;</span>).replace(<span class="st">&quot;-999&quot;</span>,<span class="va">None</span>))</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  .with_columns(pl.col(<span class="st">&quot;month&quot;</span>).replace(<span class="st">&quot;n/a&quot;</span>,<span class="va">None</span>))</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  .<span class="bu">filter</span>(pl.any_horizontal(pl.col(<span class="st">&quot;*&quot;</span>).is_null()))</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>adf.head(<span class="dv">1</span>).write_json()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  df.with_columns(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    cs.starts_with(<span class="st">&quot;num_of&quot;</span>, <span class="st">&quot;minutes&quot;</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>      .cast(pl.String)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>      .replace({<span class="st">&quot;-999&quot;</span>: <span class="va">None</span>, <span class="st">&quot;1500+&quot;</span>: <span class="va">None</span>, <span class="st">&quot;n/a&quot;</span>: <span class="va">None</span>})</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>      .cast(pl.Float64),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">&quot;month&quot;</span>).replace({<span class="st">&quot;n/a&quot;</span>: <span class="va">None</span>})</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>bdf <span class="op">=</span> adf.<span class="bu">filter</span>(pl.any_horizontal(pl.col(<span class="st">&quot;*&quot;</span>).is_null()))</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>bdf.head(<span class="dv">1</span>).write_json()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="3">
-<pre><code>&#39;[{&quot;airport_code&quot;:&quot;ATL&quot;,&quot;airport_name&quot;:&quot;Atlanta, GA: Hartsfield-Jackson Atlanta International&quot;,&quot;month&quot;:&quot;January&quot;,&quot;year&quot;:2005,&quot;num_of_flights_total&quot;:35048,&quot;num_of_delays_carrier&quot;:&quot;1500+&quot;,&quot;num_of_delays_late_aircraft&quot;:null,&quot;num_of_delays_nas&quot;:4598,&quot;num_of_delays_security&quot;:10,&quot;num_of_delays_weather&quot;:448,&quot;num_of_delays_total&quot;:8355,&quot;minutes_delayed_carrier&quot;:116423,&quot;minutes_delayed_late_aircraft&quot;:104415,&quot;minutes_delayed_nas&quot;:207467,&quot;minutes_delayed_security&quot;:297,&quot;minutes_delayed_weather&quot;:36931,&quot;minutes_delayed_total&quot;:465533}]&#39;</code></pre>
+<pre><code>&#39;[{&quot;airport_code&quot;:&quot;ATL&quot;,&quot;airport_name&quot;:&quot;Atlanta, GA: Hartsfield-Jackson Atlanta International&quot;,&quot;month&quot;:&quot;January&quot;,&quot;year&quot;:2005,&quot;num_of_flights_total&quot;:35048.0,&quot;num_of_delays_carrier&quot;:null,&quot;num_of_delays_late_aircraft&quot;:null,&quot;num_of_delays_nas&quot;:4598.0,&quot;num_of_delays_security&quot;:10.0,&quot;num_of_delays_weather&quot;:448.0,&quot;num_of_delays_total&quot;:8355.0,&quot;minutes_delayed_carrier&quot;:116423.0,&quot;minutes_delayed_late_aircraft&quot;:104415.0,&quot;minutes_delayed_nas&quot;:207467.0,&quot;minutes_delayed_security&quot;:297.0,&quot;minutes_delayed_weather&quot;:36931.0,&quot;minutes_delayed_total&quot;:465533.0}]&#39;</code></pre>
 </div>
 </div>
 </section>
@@ -2308,26 +2313,22 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 <ol start="2" type="1">
 <li><strong>Filling in missing data</strong> For all the “minutes_delayed” columns, fill in any missing values with the median of that column. For the “num_of” columns, fill in missing values with that column’s mean.</li>
 </ol>
-<p><em>This time, the values were filled rather than emptied. As seen in the raw JSON, the value which used to be</em> null <em>is now a numeric value.</em></p>
-<div id="383286a2" class="cell" data-execution_count="4">
+<p><em>This time, the values were filled rather than emptied. As seen in the raw JSON, the values which used to be</em> null <em>are now numeric values.</em></p>
+<div id="82c9b929" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>bdf <span class="op">=</span> (</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  df.with_columns(cs.starts_with(<span class="st">&quot;num_of&quot;</span>,<span class="st">&quot;minutes&quot;</span>).replace(<span class="op">-</span><span class="dv">999</span>,<span class="va">None</span>))</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  .with_columns(</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    pl.when(cs.starts_with(<span class="st">&quot;minutes&quot;</span>).is_null())</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    .then(cs.starts_with(<span class="st">&quot;minutes&quot;</span>).median())</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    .otherwise(cs.starts_with(<span class="st">&quot;minutes&quot;</span>)),</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    pl.when(cs.starts_with(<span class="st">&quot;num_of&quot;</span>).is_null())</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    .then(cs.starts_with(<span class="st">&quot;num_of&quot;</span>).mean())</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    .otherwise(cs.starts_with(<span class="st">&quot;num_of&quot;</span>))</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>bdf.head(<span class="dv">1</span>).write_json()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>cdf <span class="op">=</span> (</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  adf.with_columns(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    cs.starts_with(<span class="st">&quot;minutes&quot;</span>).fill_null(cs.starts_with(<span class="st">&quot;minutes&quot;</span>).median()),</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    cs.starts_with(<span class="st">&quot;num_of&quot;</span>).fill_null(strategy<span class="op">=</span><span class="st">&quot;mean&quot;</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>ddf <span class="op">=</span> cdf.<span class="bu">filter</span>(pl.any_horizontal(adf.select(pl.<span class="bu">all</span>().is_null())))</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>ddf.head(<span class="dv">1</span>).write_json()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="4">
-<pre><code>&#39;[{&quot;airport_code&quot;:&quot;ATL&quot;,&quot;airport_name&quot;:&quot;Atlanta, GA: Hartsfield-Jackson Atlanta International&quot;,&quot;month&quot;:&quot;January&quot;,&quot;year&quot;:2005,&quot;num_of_flights_total&quot;:35048.0,&quot;num_of_delays_carrier&quot;:&quot;1500+&quot;,&quot;num_of_delays_late_aircraft&quot;:1109.10407239819,&quot;num_of_delays_nas&quot;:4598.0,&quot;num_of_delays_security&quot;:10.0,&quot;num_of_delays_weather&quot;:448.0,&quot;num_of_delays_total&quot;:8355.0,&quot;minutes_delayed_carrier&quot;:116423.0,&quot;minutes_delayed_late_aircraft&quot;:104415.0,&quot;minutes_delayed_nas&quot;:207467.0,&quot;minutes_delayed_security&quot;:297.0,&quot;minutes_delayed_weather&quot;:36931.0,&quot;minutes_delayed_total&quot;:465533.0}]&#39;</code></pre>
+<pre><code>&#39;[{&quot;airport_code&quot;:&quot;ATL&quot;,&quot;airport_name&quot;:&quot;Atlanta, GA: Hartsfield-Jackson Atlanta International&quot;,&quot;month&quot;:&quot;January&quot;,&quot;year&quot;:2005,&quot;num_of_flights_total&quot;:35048.0,&quot;num_of_delays_carrier&quot;:691.294947121034,&quot;num_of_delays_late_aircraft&quot;:1109.10407239819,&quot;num_of_delays_nas&quot;:4598.0,&quot;num_of_delays_security&quot;:10.0,&quot;num_of_delays_weather&quot;:448.0,&quot;num_of_delays_total&quot;:8355.0,&quot;minutes_delayed_carrier&quot;:116423.0,&quot;minutes_delayed_late_aircraft&quot;:104415.0,&quot;minutes_delayed_nas&quot;:207467.0,&quot;minutes_delayed_security&quot;:297.0,&quot;minutes_delayed_weather&quot;:36931.0,&quot;minutes_delayed_total&quot;:465533.0}]&#39;</code></pre>
 </div>
 </div>
 </section>
@@ -2336,34 +2337,32 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 <ol start="3" type="1">
 <li><strong>Display a histogram for num_of_delays_carrier and for minutes_delayed_nas (2 separate histograms in total). Comment on the shape of each one. Also report the mean of each of these columns now that missing values have been filled in.</strong></li>
 </ol>
-<p><em>Both histograms generally follow a skewed left shape, aside from an outlier in the delays caused by carriers. This general shape indicates that a majority of the aggregations are generally smaller, further indicating that delays are more commonly less severe and/or common. Also seen is a vertical line indicating the mean (average) of these delays. It must be reported the influx in the first histogram around 1500 delays. This is because any delay above 1500 has been aggregated into a single 1500 statistic.</em></p>
-<div id="5b794136" class="cell" data-execution_count="5">
+<p><em>Both histograms generally follow a skewed left shape, aside from an outlier in the delays caused by carriers. This general shape indicates that a majority of the aggregations are generally smaller, further indicating that delays are more commonly less severe and/or common. Also seen is a vertical line indicating the mean (average) of these delays. As seen in these lines, the average delay caused by carriers is 691.3 and the average delay caused by NAS is 69,682.7</em></p>
+<div id="af3dacd7" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>cdf <span class="op">=</span> (</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  bdf.with_columns(cs.starts_with(<span class="st">&quot;num_of&quot;</span>,<span class="st">&quot;minutes&quot;</span>).cast(pl.String).<span class="bu">str</span>.replace(<span class="st">&quot;1500+&quot;</span>,<span class="st">&quot;1500&quot;</span>,literal<span class="op">=</span><span class="va">True</span>).cast(pl.Float32))</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>bro_just_do_the_thing <span class="op">=</span> cdf.select(pl.col(<span class="st">&quot;num_of_delays_carrier&quot;</span>).mean()).item()</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>aplot <span class="op">=</span> (</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  ggplot(cdf, aes(x<span class="op">=</span><span class="st">&quot;num_of_delays_carrier&quot;</span>))</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span>geom_histogram()</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span>geom_vline(xintercept<span class="op">=</span>bro_just_do_the_thing,color<span class="op">=</span><span class="st">&quot;red&quot;</span>)</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span>labs(</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">&quot;Monthly delays caused by the carriers&quot;</span>,</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">&quot;Count of months recorded&quot;</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>bplot <span class="op">=</span> (</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  ggplot(cdf, aes(x<span class="op">=</span><span class="st">&quot;minutes_delayed_nas&quot;</span>))</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span>geom_histogram()</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span>geom_vline(xintercept<span class="op">=</span>bro_just_do_the_thing,color<span class="op">=</span><span class="st">&quot;red&quot;</span>)</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span>labs(</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">&quot;Monthly delays caused by the National Airspace System&quot;</span>,</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">&quot;Count of months recorded&quot;</span></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>aplot.show()</span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>bplot.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>carrier_mean <span class="op">=</span> cdf.select(pl.col(<span class="st">&quot;num_of_delays_carrier&quot;</span>).mean()).item()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>nas_mean <span class="op">=</span> cdf.select(pl.col(<span class="st">&quot;minutes_delayed_nas&quot;</span>).mean()).item()</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>aplot <span class="op">=</span> (</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  ggplot(cdf, aes(x<span class="op">=</span><span class="st">&quot;num_of_delays_carrier&quot;</span>))</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span>geom_histogram()</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span>geom_vline(xintercept<span class="op">=</span>carrier_mean,color<span class="op">=</span><span class="st">&quot;red&quot;</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span>labs(</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">&quot;Monthly delays caused by the carriers&quot;</span>,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">&quot;Count of months recorded&quot;</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>bplot <span class="op">=</span> (</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  ggplot(cdf, aes(x<span class="op">=</span><span class="st">&quot;minutes_delayed_nas&quot;</span>))</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span>geom_histogram()</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span>geom_vline(xintercept<span class="op">=</span>nas_mean,color<span class="op">=</span><span class="st">&quot;red&quot;</span>)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span>labs(</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">&quot;Monthly delays caused by the National Airspace System&quot;</span>,</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">&quot;Count of months recorded&quot;</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>aplot.show()</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>bplot.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display">
 
@@ -2375,7 +2374,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 //# sourceMappingURL=lets-plot.js.map</script>
    
    
-          <div id="FhLtOx"></div>
+          <div id="lUz2m2"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -2400,7 +2399,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
        };
    }
    
-   const containerDiv = document.getElementById("FhLtOx");
+   const containerDiv = document.getElementById("lUz2m2");
    let fig = null;
    
    function renderPlot() {
@@ -2482,8 +2481,8 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 "data_meta":{
 },
 "data":{
-"..count..":[3.0,9.0,28.0,56.0,41.0,57.0,60.0,53.0,44.0,38.0,42.0,37.0,36.0,26.0,26.0,36.0,26.0,31.0,25.0,21.0,18.0,18.0,28.0,21.0,18.0,15.0,12.0,12.0,11.0,76.0],
-"num_of_delays_carrier":[125.95577777777777,173.61399999999998,221.2722222222222,268.93044444444445,316.58866666666665,364.24688888888886,411.9051111111111,459.56333333333333,507.22155555555554,554.8797777777777,602.538,650.1962222222221,697.8544444444444,745.5126666666667,793.1708888888888,840.8291111111112,888.4873333333333,936.1455555555556,983.8037777777777,1031.462,1079.120222222222,1126.7784444444444,1174.4366666666665,1222.0948888888888,1269.7531111111111,1317.4113333333332,1365.0695555555556,1412.7277777777776,1460.386,1508.044222222222]
+"..count..":[3.0,9.0,25.0,59.0,41.0,56.0,61.0,52.0,44.0,39.0,42.0,35.0,109.0,28.0,26.0,35.0,25.0,31.0,27.0,18.0,21.0,17.0,27.0,22.0,19.0,14.0,13.0,12.0,11.0,3.0],
+"num_of_delays_carrier":[125.97344444444445,173.52700000000002,221.08055555555558,268.6341111111111,316.1876666666667,363.74122222222223,411.29477777777777,458.84833333333336,506.4018888888889,553.9554444444444,601.509,649.0625555555556,696.6161111111111,744.1696666666667,791.7232222222223,839.2767777777777,886.8303333333333,934.3838888888889,981.9374444444444,1029.491,1077.0445555555557,1124.598111111111,1172.1516666666666,1219.7052222222223,1267.2587777777776,1314.8123333333333,1362.365888888889,1409.9194444444443,1457.473,1505.0265555555557]
 }
 },{
 "geom":"vline",
@@ -2491,7 +2490,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 },
 "data_meta":{
 },
-"xintercept":755.1861572265625,
+"xintercept":691.294947121034,
 "color":"red",
 "data":{
 }
@@ -2553,7 +2552,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 //# sourceMappingURL=lets-plot.js.map</script>
    
    
-          <div id="BzILI5"></div>
+          <div id="xYAtQ9"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -2578,7 +2577,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
        };
    }
    
-   const containerDiv = document.getElementById("BzILI5");
+   const containerDiv = document.getElementById("xYAtQ9");
    let fig = null;
    
    function renderPlot() {
@@ -2669,7 +2668,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 },
 "data_meta":{
 },
-"xintercept":755.1861572265625,
+"xintercept":69682.66017316017,
 "color":"red",
 "data":{
 }

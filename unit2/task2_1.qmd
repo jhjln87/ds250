@@ -100,13 +100,13 @@ df
 ```{python}
 df = (
   df.with_columns((
-    pl.col("minutes_delayed_weather")+
-    pl.col("minutes_delayed_late_aircraft")*0.3+
+    pl.col("num_of_delays_weather")+
+    pl.col("num_of_delays_late_aircraft")*0.3+
     pl.when((pl.col("Season") == "Spring")|(pl.col("Season") == "Summer")&~(pl.col("month") == "September"))
-    .then(pl.col("minutes_delayed_nas")*0.4)
-    .otherwise(pl.col("minutes_delayed_nas")*0.65)
+    .then(pl.col("num_of_delays_nas")*0.4)
+    .otherwise(pl.col("num_of_delays_nas")*0.65)
   )
-  .alias("minutes_delayed_weather_all"))
+  .alias("num_of_delays_weather_all"))
 )
 df.head()
 ```
@@ -123,11 +123,11 @@ _Observing numerically, most of the averages are similar, all plus or minus 3,00
 
 ```{python}
 aplot = (
-  ggplot(df,aes(x="Season",y="minutes_delayed_weather_all"))
+  ggplot(df,aes(x="Season",y="num_of_delays_weather_all"))
   +geom_boxplot()
   +labs(
     title="How often is a plane delayed?",
-    y="Weather Delay (minutes)"
+    y="Weather-Delayed Flights (thousands)"
   )
 )
 aplot

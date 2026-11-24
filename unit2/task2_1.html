@@ -2262,7 +2262,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
   <li><a href="#visualizing" id="toc-visualizing">Visualizing</a></li>
   </ul>
 </nav>
-<div id="0f37cbb0" class="cell" data-execution_count="1">
+<div id="af8b0d9d" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
@@ -2275,7 +2275,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>LetsPlot.setup_html(isolated_frame<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<div id="204ae39c" class="cell" data-execution_count="2">
+<div id="030b6112" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html</span></span>
@@ -2298,7 +2298,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 <li>All other rows can be assigned a value of ‘Unknown’</li>
 </ol></li>
 </ol>
-<div id="f2a41ca0" class="cell" data-execution_count="3">
+<div id="5ddc4281" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> (</span>
@@ -2596,7 +2596,7 @@ white-space: pre-wrap;
 <ol start="2" type="1">
 <li><strong>Divide all the columns by 1000 whose name starts with num_of.</strong> Be sure to first filter out rows that contain problematic values for the columns like -999 or 1500+.</li>
 </ol>
-<div id="c2404e0e" class="cell" data-execution_count="4">
+<div id="a44f597c" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> (</span>
@@ -2904,18 +2904,18 @@ white-space: pre-wrap;
 <li>From April through August, 40% of delayed flights in the NAS category are due to weather. The rest of the months, the proportion rises to 65%</li>
 </ol></li>
 </ol>
-<div id="cc5d3797" class="cell" data-execution_count="5">
+<div id="edb81308" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> (</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  df.with_columns((</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">&quot;minutes_delayed_weather&quot;</span>)<span class="op">+</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">&quot;minutes_delayed_late_aircraft&quot;</span>)<span class="op">*</span><span class="fl">0.3</span><span class="op">+</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">&quot;num_of_delays_weather&quot;</span>)<span class="op">+</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">&quot;num_of_delays_late_aircraft&quot;</span>)<span class="op">*</span><span class="fl">0.3</span><span class="op">+</span></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    pl.when((pl.col(<span class="st">&quot;Season&quot;</span>) <span class="op">==</span> <span class="st">&quot;Spring&quot;</span>)<span class="op">|</span>(pl.col(<span class="st">&quot;Season&quot;</span>) <span class="op">==</span> <span class="st">&quot;Summer&quot;</span>)<span class="op">&amp;~</span>(pl.col(<span class="st">&quot;month&quot;</span>) <span class="op">==</span> <span class="st">&quot;September&quot;</span>))</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    .then(pl.col(<span class="st">&quot;minutes_delayed_nas&quot;</span>)<span class="op">*</span><span class="fl">0.4</span>)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    .otherwise(pl.col(<span class="st">&quot;minutes_delayed_nas&quot;</span>)<span class="op">*</span><span class="fl">0.65</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    .then(pl.col(<span class="st">&quot;num_of_delays_nas&quot;</span>)<span class="op">*</span><span class="fl">0.4</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    .otherwise(pl.col(<span class="st">&quot;num_of_delays_nas&quot;</span>)<span class="op">*</span><span class="fl">0.65</span>)</span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  .alias(<span class="st">&quot;minutes_delayed_weather_all&quot;</span>))</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  .alias(<span class="st">&quot;num_of_delays_weather_all&quot;</span>))</span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>df.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
@@ -2949,7 +2949,7 @@ white-space: pre-wrap;
 <th data-quarto-table-cell-role="th">minutes_delayed_weather</th>
 <th data-quarto-table-cell-role="th">minutes_delayed_total</th>
 <th data-quarto-table-cell-role="th">Season</th>
-<th data-quarto-table-cell-role="th">minutes_delayed_weather_all</th>
+<th data-quarto-table-cell-role="th">num_of_delays_weather_all</th>
 </tr>
 <tr class="even">
 <td>str</td>
@@ -2993,7 +2993,7 @@ white-space: pre-wrap;
 <td>21779</td>
 <td>182797</td>
 <td>&quot;Winter&quot;</td>
-<td>66800.35</td>
+<td>1.11915</td>
 </tr>
 <tr class="even">
 <td>&quot;IAD&quot;</td>
@@ -3014,7 +3014,7 @@ white-space: pre-wrap;
 <td>4497</td>
 <td>134881</td>
 <td>&quot;Winter&quot;</td>
-<td>48951.7</td>
+<td>0.96015</td>
 </tr>
 <tr class="odd">
 <td>&quot;ORD&quot;</td>
@@ -3035,7 +3035,7 @@ white-space: pre-wrap;
 <td>24859</td>
 <td>638894</td>
 <td>&quot;Winter&quot;</td>
-<td>309950.6</td>
+<td>4.50225</td>
 </tr>
 <tr class="even">
 <td>&quot;SAN&quot;</td>
@@ -3056,7 +3056,7 @@ white-space: pre-wrap;
 <td>4326</td>
 <td>91552</td>
 <td>&quot;Winter&quot;</td>
-<td>29592.05</td>
+<td>0.6747</td>
 </tr>
 <tr class="odd">
 <td>&quot;SFO&quot;</td>
@@ -3077,7 +3077,7 @@ white-space: pre-wrap;
 <td>7373</td>
 <td>157275</td>
 <td>&quot;Winter&quot;</td>
-<td>60931.5</td>
+<td>1.0918</td>
 </tr>
 </tbody>
 </table>
@@ -3093,15 +3093,15 @@ white-space: pre-wrap;
 <p><em>As described in the prompts above, a dataset on airports has been wrangled to condense months into specific seasons, and correct discrepancies. As seen in prompt 3, delay due to weather is noticeably higher in the darker months (fall and winter) than the others. Spring can be seen to have the lowest average delay and the lowest extreme delay. This can indicate that the most reliable time to fly may be in the Spring months (April-June).</em></p>
 <p><em>It may be noticed that some of these numbers are in the hundreds of thousands, and it must be addressed that these delays are aggregated among sometimes a hundred plane gates at a time, and aggregated among an entire month. Because of this, it can be calculated that a statistic of 450,000 minutes delay averages out to an 18 minute delay in an average airport and a 9 minute delay in larger airports such as LAX; per plane.</em></p>
 <p><em>Observing numerically, most of the averages are similar, all plus or minus 3,000 minutes of the other. This could indicate that weather may only affect delay in extreme cases. This could further be proven by noting that the original data file only tracked delay in extreme weather.</em></p>
-<div id="10f86be2" class="cell" data-execution_count="6">
+<div id="38208c50" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>aplot <span class="op">=</span> (</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  ggplot(df,aes(x<span class="op">=</span><span class="st">&quot;Season&quot;</span>,y<span class="op">=</span><span class="st">&quot;minutes_delayed_weather_all&quot;</span>))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  ggplot(df,aes(x<span class="op">=</span><span class="st">&quot;Season&quot;</span>,y<span class="op">=</span><span class="st">&quot;num_of_delays_weather_all&quot;</span>))</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span>geom_boxplot()</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span>labs(</span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">&quot;How often is a plane delayed?&quot;</span>,</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">&quot;Weather Delay (minutes)&quot;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">&quot;Weather-Delayed Flights (thousands)&quot;</span></span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>aplot</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -3116,7 +3116,7 @@ white-space: pre-wrap;
 //# sourceMappingURL=lets-plot.js.map</script>
    
    
-          <div id="LteWtE"></div>
+          <div id="IbfZVm"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -3141,7 +3141,7 @@ white-space: pre-wrap;
        };
    }
    
-   const containerDiv = document.getElementById("LteWtE");
+   const containerDiv = document.getElementById("IbfZVm");
    let fig = null;
    
    function renderPlot() {
@@ -3151,7 +3151,7 @@ white-space: pre-wrap;
 },
 "mapping":{
 "x":"Season",
-"y":"minutes_delayed_weather_all"
+"y":"num_of_delays_weather_all"
 },
 "data_meta":{
 "series_annotations":[{
@@ -3210,7 +3210,7 @@ white-space: pre-wrap;
 "column":"Season"
 },{
 "type":"float",
-"column":"minutes_delayed_weather_all"
+"column":"num_of_delays_weather_all"
 }]
 },
 "ggtitle":{
@@ -3218,7 +3218,7 @@ white-space: pre-wrap;
 },
 "guides":{
 "y":{
-"title":"Weather Delay (minutes)"
+"title":"Weather-Delayed Flights (thousands)"
 }
 },
 "kind":"plot",
@@ -3230,11 +3230,11 @@ white-space: pre-wrap;
 "data_meta":{
 },
 "data":{
-"..middle..":[44836.600000000006,39297.7,34003.3,37911.925,28570.25],
-"..lower..":[19659.324999999997,16466.5,17958.85,16479.050000000003,18514.100000000002],
-"..upper..":[89356.475,74384.7,73296.1,78014.975,91609.8],
-"..ymin..":[7539.85,6466.2,3818.5499999999997,5077.85,10861.5],
-"..ymax..":[193300.2,158278.5,155051.0,168840.25,137437.4],
+"..middle..":[0.9126000000000001,0.6564,0.726,0.7971,0.6055750000000001],
+"..lower..":[0.44135,0.33645,0.3542,0.37557500000000005,0.41305000000000003],
+"..upper..":[1.59725,1.2309,1.3389000000000002,1.462625,1.649175],
+"..ymin..":[0.16275,0.10350000000000001,0.1387,0.08904999999999999,0.2288],
+"..ymax..":[3.2257,2.434,2.7343,3.02335,2.97375],
 "Season":["Winter","Spring","Summer","Fall","Unknown"]
 }
 },{
@@ -3247,18 +3247,17 @@ white-space: pre-wrap;
 "data_meta":{
 },
 "data":{
-"..middle..":[44836.600000000006,44836.600000000006,44836.600000000006,44836.600000000006,44836.600000000006,39297.7,39297.7,39297.7,39297.7,39297.7,39297.7,39297.7,39297.7,39297.7,39297.7,39297.7,34003.3,34003.3,34003.3,34003.3,34003.3,34003.3,34003.3,34003.3,34003.3,37911.925,37911.925,37911.925,37911.925,37911.925,37911.925,37911.925,37911.925,37911.925,37911.925,28570.25,28570.25],
-"..lower..":[19659.324999999997,19659.324999999997,19659.324999999997,19659.324999999997,19659.324999999997,16466.5,16466.5,16466.5,16466.5,16466.5,16466.5,16466.5,16466.5,16466.5,16466.5,16466.5,17958.85,17958.85,17958.85,17958.85,17958.85,17958.85,17958.85,17958.85,17958.85,16479.050000000003,16479.050000000003,16479.050000000003,16479.050000000003,16479.050000000003,16479.050000000003,16479.050000000003,16479.050000000003,16479.050000000003,16479.050000000003,18514.100000000002,18514.100000000002],
-"..upper..":[89356.475,89356.475,89356.475,89356.475,89356.475,74384.7,74384.7,74384.7,74384.7,74384.7,74384.7,74384.7,74384.7,74384.7,74384.7,74384.7,73296.1,73296.1,73296.1,73296.1,73296.1,73296.1,73296.1,73296.1,73296.1,78014.975,78014.975,78014.975,78014.975,78014.975,78014.975,78014.975,78014.975,78014.975,78014.975,91609.8,91609.8],
-"..ymin..":[7539.85,7539.85,7539.85,7539.85,7539.85,6466.2,6466.2,6466.2,6466.2,6466.2,6466.2,6466.2,6466.2,6466.2,6466.2,6466.2,3818.5499999999997,3818.5499999999997,3818.5499999999997,3818.5499999999997,3818.5499999999997,3818.5499999999997,3818.5499999999997,3818.5499999999997,3818.5499999999997,5077.85,5077.85,5077.85,5077.85,5077.85,5077.85,5077.85,5077.85,5077.85,5077.85,10861.5,10861.5],
-"..ymax..":[193300.2,193300.2,193300.2,193300.2,193300.2,158278.5,158278.5,158278.5,158278.5,158278.5,158278.5,158278.5,158278.5,158278.5,158278.5,158278.5,155051.0,155051.0,155051.0,155051.0,155051.0,155051.0,155051.0,155051.0,155051.0,168840.25,168840.25,168840.25,168840.25,168840.25,168840.25,168840.25,168840.25,168840.25,168840.25,137437.4,137437.4],
-"Season":["Winter","Winter","Winter","Winter","Winter","Spring","Spring","Spring","Spring","Spring","Spring","Spring","Spring","Spring","Spring","Spring","Summer","Summer","Summer","Summer","Summer","Summer","Summer","Summer","Summer","Fall","Fall","Fall","Fall","Fall","Fall","Fall","Fall","Fall","Fall","Unknown","Unknown"],
-"minutes_delayed_weather_all":[309950.6,333132.05000000005,461440.85000000003,211884.8,291487.15,163250.0,228438.90000000002,238789.2,161588.9,293665.3,177192.3,182379.8,166644.3,200064.6,197854.7,196572.3,186185.0,325589.75,158179.65,179428.6,183288.45,174823.90000000002,212841.40000000002,179547.5,177486.35,174455.25,171920.6,177482.65000000002,186883.75,185548.4,230970.7,240278.4,175565.05,274299.35,230355.75,290342.85,249425.05]
+"..middle..":[0.9126000000000001,0.9126000000000001,0.9126000000000001,0.9126000000000001,0.9126000000000001,0.6564,0.6564,0.6564,0.6564,0.6564,0.6564,0.6564,0.726,0.726,0.726,0.726,0.7971,0.7971,0.7971,0.7971,0.7971,0.7971,0.7971,0.7971,0.6055750000000001],
+"..lower..":[0.44135,0.44135,0.44135,0.44135,0.44135,0.33645,0.33645,0.33645,0.33645,0.33645,0.33645,0.33645,0.3542,0.3542,0.3542,0.3542,0.37557500000000005,0.37557500000000005,0.37557500000000005,0.37557500000000005,0.37557500000000005,0.37557500000000005,0.37557500000000005,0.37557500000000005,0.41305000000000003],
+"..upper..":[1.59725,1.59725,1.59725,1.59725,1.59725,1.2309,1.2309,1.2309,1.2309,1.2309,1.2309,1.2309,1.3389000000000002,1.3389000000000002,1.3389000000000002,1.3389000000000002,1.462625,1.462625,1.462625,1.462625,1.462625,1.462625,1.462625,1.462625,1.649175],
+"..ymin..":[0.16275,0.16275,0.16275,0.16275,0.16275,0.10350000000000001,0.10350000000000001,0.10350000000000001,0.10350000000000001,0.10350000000000001,0.10350000000000001,0.10350000000000001,0.1387,0.1387,0.1387,0.1387,0.08904999999999999,0.08904999999999999,0.08904999999999999,0.08904999999999999,0.08904999999999999,0.08904999999999999,0.08904999999999999,0.08904999999999999,0.2288],
+"..ymax..":[3.2257,3.2257,3.2257,3.2257,3.2257,2.434,2.434,2.434,2.434,2.434,2.434,2.434,2.7343,2.7343,2.7343,2.7343,3.02335,3.02335,3.02335,3.02335,3.02335,3.02335,3.02335,3.02335,2.97375],
+"Season":["Winter","Winter","Winter","Winter","Winter","Spring","Spring","Spring","Spring","Spring","Spring","Spring","Summer","Summer","Summer","Summer","Fall","Fall","Fall","Fall","Fall","Fall","Fall","Fall","Unknown"],
+"num_of_delays_weather_all":[4.50225,4.5224,5.3636,3.9402000000000004,3.8055999999999996,2.9155,3.1303,3.9831000000000003,2.8731,3.3878999999999997,2.5793,2.8751,4.23815,2.83265,3.2079000000000004,3.9421,3.6346000000000007,3.4626500000000004,3.14565,3.5953500000000007,4.75985,3.1301,3.2392000000000003,4.4428,5.03795]
 }
 }],
 "metainfo_list":[],
-"spec_id":"1",
-"computation_messages":["[box_plot] Removed 28 rows out of 843 containing non-finite values by stat 'boxplot'."]
+"spec_id":"1"
 };
            fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, containerDiv, sizing);
        } else {

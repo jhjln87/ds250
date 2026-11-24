@@ -65,18 +65,28 @@ adf
 
 __Which airport has the worst delays?__ Describe the metric you chose, and why you chose it to determine the “worst” airport. Your answer should include a summary table that lists (for each airport) the total number of flights, total number of delayed flights, proportion of delayed flights, and average delay time in hours. 
 
-_This took a bit to wrangle, but shows insight. When sorted by total delayed flights, Atlanta and O'Hare are listed on top. When sorted by delay percentage, San Francisco is on top with 80-90 percent of their flights delayed. When sorted by average delay hours, O'Hare is the main contender with a high average of 1.5 hours of delay. In general, it is seen that the airports with the most delay are the biggest airports with the most plane traffic._
+_This took a bit to wrangle, but shows insight. When sorted by total delayed flights, Atlanta and O'Hare are listed on top. When sorted by delay percentage, San Francisco is on top with over a quarter of their flights delayed. When sorted by average delay hours, O'Hare is the main contender with an average of just over an hour delay. In general, it is seen that the airports with the most delay are the biggest airports with the most plane traffic._
 
 ```{python}
 bdf = (
-  df.with_columns(cs.starts_with("num_of_delays").replace({"-999":0,None:0}))
-  .with_columns(cs.starts_with("num_of_delays").cast(pl.String).str.replace("1500+","1500",literal=True))
-  .with_columns(cs.starts_with("num_of_delays").cast(pl.Int64))
-  .with_columns(pl.sum_horizontal(cs.starts_with("num_of_delays")).alias("total_delayed_flights"))
-  .with_columns((100*(pl.col("total_delayed_flights")/(pl.col("num_of_flights_total")))).alias("delay_percentage"))
-  .with_columns(((pl.sum_horizontal(cs.starts_with("minutes_delayed")))/60/(pl.col("total_delayed_flights"))).alias("avg_delay_hrs"))
-  .select("airport_code","year","num_of_flights_total","total_delayed_flights","delay_percentage","avg_delay_hrs")
-  .sort(by=["delay_percentage"],descending=True)
+  df.with_columns(
+    pl.col("num_of_flights_total").cast(pl.String).replace({"-999": None}).cast(pl.Int64),
+    pl.col("num_of_delays_total").cast(pl.String).replace({"-999": None}).cast(pl.Int64),
+    pl.col("minutes_delayed_total").cast(pl.String).replace({"-999": None}).cast(pl.Int64)
+  )
+  .group_by("airport_code")
+  .agg(
+    pl.col("num_of_flights_total").sum().alias("total_flights"),
+    pl.col("num_of_delays_total").sum().alias("total_delayed_flights"),
+    pl.col("minutes_delayed_total").sum().alias("total_delay_minutes")
+  )
+  .with_columns(
+    (pl.col("total_delayed_flights") / pl.col("total_flights")).alias("prop_delayed"),
+    (100 * (pl.col("total_delayed_flights") / pl.col("total_flights"))).alias("delay_percentage"),
+    (pl.col("total_delay_minutes") / pl.col("total_delayed_flights") / 60).alias("avg_delay_hrs")
+  )
+  .select("airport_code","total_flights","total_delayed_flights","prop_delayed","delay_percentage","avg_delay_hrs")
+  .sort(by=["prop_delayed"],descending=True)
 )
 bdf
 ```
@@ -85,21 +95,16 @@ bdf
 
 __Create a barplot showing the proportion of all flights that are delayed at each airport. Describe what you learn from this graph.__  
 
-_This graph is quite simple, it compares all the airports and their average delay across the entire dataframe. General statistics cannot immediately be gleaned from this chart, but it can be compared which major airports are more favorable for air travel. Salt Lake City beats out all other airports by a good margin, at only 30% of flights being delayed. San Francisco is the most delayed, although planes there are only delayed 50% of the time._
+_This graph is quite simple, it compares all airports and their proportion of delayed flights. It can be understood as "how likely is a plane to be delayed based on airport". General statistics cannot immediately be gleaned from this chart, but it can be compared which major airports are more favorable for air travel. Salt Lake City beats out all other airports by a good margin, at only 14.6% of flights being delayed. San Francisco is the most delayed, although planes there are only delayed 26.1% of the time._
 
 ```{python}
-cdf = (
-  bdf.group_by(["airport_code"])
-  .agg(pl.col(["num_of_flights_total","total_delayed_flights"]).sum(),pl.col(["delay_percentage","avg_delay_hrs"]).mean())
-  .sort(by=["delay_percentage"])
-)
 cplot = (
-  ggplot(cdf,aes(x="airport_code",y="delay_percentage"))
+  ggplot(bdf,aes(x="airport_code",y="prop_delayed"))
   +geom_bar(stat="identity")
   +labs(
     x="Airport",
-    y="Delayed flights per 100 flights",
-    title="Which airport delays the most?"
+    y="Proportion of delayed flights",
+    title="Proportion of Flights Delayed by Airport"
   )
 )
 cplot
