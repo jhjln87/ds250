@@ -115,12 +115,7 @@ _type your write-up and analysis here_
 
 ## Methods
 
-_type your report here, you will likely want multiple code chunks and text intermingled_
-
-_AI use reflection_
-**Link** to the original chat:
-**The Process** How exactly did you use the tool?
-**The Impact**  How did using AI impact your learning?
+_This first chunk of code gleans first and last names from various email types. This is for user convenience rather than a machine learning algorithm._
 
 ```{python}
 regexmap = [r'(?i)([A-Z]+)',r'[\._0-9](?i)([A-Z]+)',r'@(?i)([A-Z]+)']
@@ -145,29 +140,33 @@ bdf = (
   .agg(pl.len().alias("count"))
   .sort(by=["count"],descending=True)
 )
-# adf.head().show()
-# bdf.head().show()
+adf.head().show()
+bdf.head().show()
+```
 
+_This chunk of code is a compilation of numerical replacements for non-numeric yet easily translatable items such as a range of favorability or level of education. These replacements will be beneficial to the machine as their value directly correlates with the string option. The remaining string options will be cared for in the next code block._
+```{python}
 #i am so sorry for the wall below this
 yesnomap = {None:0,"No":0,"Yes":1}
 favorabilitymap = {None:0,"Unfamiliar (N/A)":0,"Very unfavorably":1,"Somewhat unfavorably":2,"Neither favorably nor unfavorably (neutral)":3,"Somewhat favorably":4,"Very favorably":5}
-hanshotfirst = {None:0,"I don't understand this question":0,"Greedo":1,"Han":2}
-gendermap = {"Male":0,"Female":1}
+#hanshotfirst = {None:0,"I don't understand this question":0,"Greedo":1,"Han":2}
+# gendermap = {"Male":0,"Female":1}
 edumap = {None:0,"Less than high school degree":1,"High school degree":2,"Some college or Associate degree":3,"Bachelor degree":4,"Graduate degree":5}
-locmap = {None:0,"East South Central":1,"New England":2,"Mountain":3,"West North Central":4,"West South Central":5,"Middle Atlantic":6,"South Atlantic":7,"Pacific":8,"East North Central":9}
+#locmap = {None:0,"East South Central":1,"New England":2,"Mountain":3,"West North Central":4,"West South Central":5,"Middle Atlantic":6,"South Atlantic":7,"Pacific":8,"East North Central":9}
 cdf = (
   df.filter(pl.any_horizontal(cs.starts_with("seen_Episode_").is_not_null()))
+  .drop_nulls(subset=["age"]+[f"rank_Episode_{r}" for r in ["I","II","III","IV","V","VI"]])
   .with_columns(
     pl.col("star_wars_fan","know_expanded_universe","expanded_universe_fan","star_trek_fan").replace(yesnomap).cast(pl.Int8),
     cs.starts_with("seen_Episode").is_not_null().cast(pl.Int8),
     cs.starts_with("rank_Episode").cast(pl.Int8),
     pl.col("fav_Han_Solo","fav_Luke_Skywalker","fav_Princess_Leia_Organa","fav_Anakin_Skywalker","fav_Obi_Wan_Kenobi","fav_Emperor_Palpatine","fav_Darth_Vader","fav_Lando_Calrissian","fav_Boba_Fett","fav_C-3P0","fav_R2_D2","fav_Jar_Jar_Binks","fav_Padme_Amidala","fav_Yoda").replace(favorabilitymap).cast(pl.Int8),
-    pl.col("who_shot_first").replace(hanshotfirst).cast(pl.Int8),
-    pl.col("gender").replace(gendermap).cast(pl.Int8),
+    #pl.col("who_shot_first").replace(hanshotfirst).cast(pl.Int8),
+    # pl.col("gender").replace(gendermap).cast(pl.Int8),
     pl.col("age").str.extract_all(r"\d+").cast(pl.List(pl.Float64)).list.mean().cast(pl.Float16),
     pl.col("household_income").fill_null(0).str.replace_all(",","").str.extract_all(r"\d+").cast(pl.List(pl.Float64)).list.mean().round().cast(pl.Int32),
     pl.col("education").replace(edumap).cast(pl.Int8),
-    pl.col("location").replace(locmap).cast(pl.Int8)
+    #pl.col("location").replace(locmap).cast(pl.Int8)
   )
   
   .drop("seen_any")
@@ -176,19 +175,72 @@ df.show()
 cdf.show()
 ```
 
+_The remaining string values do not have any spectrum numerically, so must be cared for using OneHotEncoding. It creates new columns for each string value of the original dataframe, assigning 1 if it was the value listed in the column, 0 if otherwise. This will be more beneficial to the machine learning model as it indicates no correlation or equal correlation between all previous string values._
+```{python}
+from sklearn.preprocessing import OneHotEncoder
+
+performOn = ["who_shot_first","gender","location"]
+ohe = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
+new = pl.from_numpy(
+  ohe.fit_transform(cdf[performOn]),
+  schema=ohe.get_feature_names_out(performOn).tolist()
+).cast(pl.Int8)
+ddf = (
+  cdf.hstack(new)
+  .with_columns(
+    pl.when(pl.col("household_income")>5e4)
+    .then(1)
+    .otherwise(0)
+    .alias("makes_over_50k")
+    .cast(pl.Int8)
+  )
+  .drop("respondentid","email","who_shot_first","gender","household_income","location")
+)
+ddf.show()
+```
+
+_This chunk of code trains four different models on the data above. It compares the makes\_over\_50k column with all other columns to create the best model of its type. See each model's accuracy in the __Results__ section._
+```{python}
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+import xgboost as xgb
+from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import GradientBoostingClassifier
+
+X_train, X_test, y_train, y_test = train_test_split(
+  ddf.select(pl.exclude("makes_over_50k")),
+  ddf["makes_over_50k"],
+  test_size=0.2,
+  random_state=0
+)
+
+forestModel = RandomForestClassifier(n_estimators=100,max_depth=5,random_state=0)
+forestModel.fit(X_train, y_train)
+forestPredict = forestModel.predict(X_test)
+
+xgbModel = xgb.XGBClassifier(n_estimators=100,learning_rate=0.05,max_depth=5,random_state=0)
+xgbModel.fit(X_train, y_train)
+xgbPredict = xgbModel.predict(X_test)
+
+NBModel = GaussianNB()
+NBModel.fit(X_train, y_train)
+NBPredict = NBModel.predict(X_test)
+
+gradientBoostModel = GradientBoostingClassifier(n_estimators=100,learning_rate=0.05,max_depth=5,random_state=0)
+gradientBoostModel.fit(X_train, y_train)
+gradientBoostPredict = gradientBoostModel.predict(X_test)
+```
+
 ## Results
 
-_type your report here, you will likely want multiple code chunks and text intermingled_
-
-_AI use reflection_
-**Link** to the original chat:
-**The Process** How exactly did you use the tool?
-**The Impact**  How did using AI impact your learning?
+_A small amount of tinkering was done on the machile learning models, however non-extensive. It was found that most models averaged around 55% accurate. The top performing model is seen to be the Random Forest model. It achieved a 60% accuracy at a lower test size and higher tree depth. Such a low accuracy score can indicate two possibilities. One possibility is that someone's opinion on Star Wars may not be a good indicator for household income. Another possibility is that there was insufficient data collected, such as too little size datasets or irrelevant questions being asked. However, since many questions were asked in the survey, the first possibility is more likely._
 
 ```{python}
-# Include and execute your code here
-
-
+from sklearn.metrics import accuracy_score
+modelResults = pl.DataFrame({
+  "Models": ["Random Forest","XGBoost","Naive Bayes","Gradient Boosting"],
+  "Accuracy":[accuracy_score(y_test,forestPredict),accuracy_score(y_test,xgbPredict),accuracy_score(y_test,NBPredict),accuracy_score(y_test,gradientBoostPredict)]
+}).sort(by=["Accuracy"],descending=True).show()
 ```
 
 ## Results
